@@ -1,0 +1,17 @@
+PyYAML
+click
+clickclick
+pbr
+progressbar2
+py
+pytest
+python-utils
+pyvmomi
+requests
+six
+asn1crypto
+cffi
+idna
+paramiko
+pyasn1
+scp
