@@ -25,6 +25,8 @@ Once installed you can run ::
 
  pyoxeconf_cli --help
 
+
+
 Examples
 ========
 
@@ -275,6 +277,15 @@ SIPp
 ToDo List
 ---------
 
+    * netadmin DNS (mandatory for Rainbow)
+    * netadmin Proxy (mandatory for Rainbow)
+    * proxy management for API based command
+    * Mevo 4645 management
+    * Swinst:
+        + stop/start telephone
+        + set autostart
+        + install delivery from network
+        + install OPS
 
 
 
