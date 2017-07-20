@@ -91,3 +91,16 @@ def oxe_system_csta_sessions_monitored(host, token, max_session):
     except requests.exceptions.RequestException as e:
         pprint.pprint(e)
     return modification.status_code
+
+
+def oxe_system_network_number(host, token, port, user):
+    # update network number in MGR with value from netdata
+    # NET_NBER=1
+    print('todo\n')
+
+
+def oxe_system_node_number(host, token, port, user):
+    # update node number in MGR with value from netdata
+    # NODE_NBER=1
+
+    print('todo\n')

@@ -22,7 +22,7 @@ from pyoxeconf.oxe_shelves import *
 from pyoxeconf.oxe_systems import *
 from pyoxeconf.oxe_ip_domains import *
 from pyoxeconf.oxe_translator import *
-# from pyoxeconf.oxe_netadmin import *
+from pyoxeconf.oxe_netadmin import *
 # from pyoxeconf.oxe_swinst import *
 from pyoxeconf.oms_config import *
 from pyoxeconf.sipp import *
@@ -513,6 +513,7 @@ def cli_oms_config(**kwargs):
 
 
 # Translator management
+
 @cli.command('createDpnssPrefix')
 @click.option('--dpnss', help='DPNSS prefix number', default='A1000')
 def cli_oxe_translator_prefix_create_dpnss(dpnss):
@@ -520,7 +521,34 @@ def cli_oxe_translator_prefix_create_dpnss(dpnss):
     oxe_translator_prefix_create_dpnss(host, token, dpnss)
 
 
+# netadmin management
+
+@cli.command('setDns')
+@click.option('--ip', help='OXE IP address')
+@click.option('--port', help='OXE SSH port', default=22)
+@click.option('--password', help='mtcl password', default='mtcl')
+@click.option('--rootPassword', help='root password', default='letacla')
+@click.option('--dns1', help='DNS1 IP address', default=None)
+@click.option('--dns2', help='DNS2 IP address', default='127.0.0.1')
+def cli_netadmin_dns(**kwargs):
+    ip = kwargs.get('ip')
+    if ip is None:
+        print('--ip option is mandatory. Exiting ...')
+        exit(-1)
+    dns1 = kwargs.get('dns1')
+    if dns1 is None:
+        print('--dns1 option is mandatory. Exiting ...')
+        exit(-1)
+    port = kwargs.get('port')
+    password = kwargs.get('password')
+    root_password = kwargs.get('rootpassword')
+    dns1 = kwargs.get('dns1')
+    dns2 = kwargs.get('dns2')
+    oxe_netadmin_dns(ip, dns1, dns2, port, password, root_password)
+
+
 # Logs utilities
+
 @cli.command('oxeLogSh')
 @click.option('--ip', help='OXE IP address')
 @click.option('--port', help='OXE SSH port', default=22)
