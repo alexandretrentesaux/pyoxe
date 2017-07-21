@@ -539,12 +539,41 @@ def cli_netadmin_dns(**kwargs):
     if dns1 is None:
         print('--dns1 option is mandatory. Exiting ...')
         exit(-1)
-    port = kwargs.get('port')
-    password = kwargs.get('password')
-    root_password = kwargs.get('rootpassword')
-    dns1 = kwargs.get('dns1')
-    dns2 = kwargs.get('dns2')
-    oxe_netadmin_dns(ip, dns1, dns2, port, password, root_password)
+    oxe_netdata_update(ip,
+                       'DNSPRIMADDR=' + kwargs.get('dns1') + '\nDNSSECADDR=' + kwargs.get('dns2'),
+                       kwargs.get('port'),
+                       kwargs.get('password'),
+                       kwargs.get('rootpassword'))
+
+
+@cli.command('setProxy')
+@click.option('--ip', help='OXE IP address')
+@click.option('--port', help='OXE SSH port', default=22)
+@click.option('--password', help='mtcl password', default='mtcl')
+@click.option('--rootPassword', help='root password', default='letacla')
+@click.option('--proxyAddr', help='Proxy IP address', default=None)
+@click.option('--proxyPort', help='Proxy port', default=None)
+@click.option('--proxyUser', help='Proxy login', default='')
+@click.option('--proxyPassword', help='Proxy port', default='')
+def cli_netadmin_proxy(**kwargs):
+    ip = kwargs.get('ip')
+    if ip is None:
+        print('--ip option is mandatory. Exiting ...')
+        exit(-1)
+    proxy_address = kwargs.get('proxyaddr')
+    if proxy_address is None:
+        print('--proxyAddr option is mandatory. Exiting ...')
+        exit(-1)
+    proxy_port = kwargs.get('proxyport')
+    if proxy_port is None:
+        print('--proxyPort option is mandatory. Exiting ...')
+        exit(-1)
+    proxy_data = 'PROXYADDR=' + proxy_address + '\nPROXYPORT=' + proxy_port
+    proxy_user = kwargs.get('proxyuser')
+    if proxy_user != '':
+        proxy_data += '\nPROXYUSER=' + proxy_user
+    proxy_data += '\nPROXYPASSWD=' + kwargs.get('proxypassword')
+    oxe_netdata_update(ip, proxy_data, kwargs.get('port'), kwargs.get('password'), kwargs.get('rootpassword'))
 
 
 # Logs utilities

@@ -198,12 +198,13 @@ Netadmin management
 
 * Set proxies
 
-    + *On Going*
+    + pyoxeconf_cli setProxy --ip 10.100.8.19 --proxyAddr 10.100.8.2 --proxyPort 8080
+    + pyoxeconf_cli setProxy --ip 10.100.8.19 --proxyAddr 10.100.8.2 --proxyPort 8080 --proxyUser Alexandre --proxyPassword Test
 
 * Set DNS
 
-    + *On Going*
-
+    + pyoxeconf_cli setDns --ip 10.100.8.19 --dns1 10.100.0.70 --dns2 10.100.0.71
+    + pyoxeconf_cli setDns --ip 10.100.8.19 --dns1 10.100.0.70
 
 
 Swinst management
