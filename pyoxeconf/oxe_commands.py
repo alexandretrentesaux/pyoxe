@@ -99,7 +99,7 @@ def oxe_runmao(host, port, password):
         client.connect(host, port, username='mtcl', password=password)
     except paramiko.AuthenticationException:
         print('*** Failed to connect to {}:{}'.format(host, port))
-    client.exec_command('RUNMAO')
+    client.exec_command('RUNMAO\n')
     client.close()
 
 
@@ -121,5 +121,5 @@ def oxe_runtel(host, port, password):
         client.connect(host, port, username='mtcl', password=password)
     except paramiko.AuthenticationException:
         print('*** Failed to connect to {}:{}'.format(host, port))
-    client.exec_command('RUNTEL')
+    client.exec_command('RUNTEL\n')
     client.close()

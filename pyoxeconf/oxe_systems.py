@@ -93,14 +93,33 @@ def oxe_system_csta_sessions_monitored(host, token, max_session):
     return modification.status_code
 
 
-def oxe_system_network_number(host, token, port, user):
-    # update network number in MGR with value from netdata
-    # NET_NBER=1
-    print('todo\n')
+def oxe_system_network_number(host, token, net_number):
+    payload = {
+        'Network_Number': net_number
+    }
+    requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
+    try:
+        modification = requests.put(
+            'https://' + host + '/api/mgt/1.0/Node/1/System_Parameters/1',
+            json=payload,
+            headers=oxe_set_headers(token, 'PUT'),
+            verify=False)
+    except requests.exceptions.RequestException as e:
+        pprint.pprint(e)
+    return modification.status_code
 
 
-def oxe_system_node_number(host, token, port, user):
-    # update node number in MGR with value from netdata
-    # NODE_NBER=1
-
-    print('todo\n')
+def oxe_system_node_number(host, token, node_number):
+    payload = {
+        'Node_Number': node_number
+    }
+    requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
+    try:
+        modification = requests.put(
+            'https://' + host + '/api/mgt/1.0/Node/1/System_Parameters/1',
+            json=payload,
+            headers=oxe_set_headers(token, 'PUT'),
+            verify=False)
+    except requests.exceptions.RequestException as e:
+        pprint.pprint(e)
+    return modification.status_code

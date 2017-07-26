@@ -429,7 +429,7 @@ def cli_enable_sip(trkid):
     oxe_sip_proxy(host, token)
     oxe_ip_domain_deactivate_compression_default_ip_domain(host, token)
     oxe_system_compression_type(host, token, 'G_729')
-    oxe_system_law(host, token, 'A_Law')
+    oxe_system_law(host, token, 'Law_A')
     oxe_system_accept_mu_a_laws_in_sip(host, token, 'true')
     oxe_system_alaw_to_mulaw(host, token, 'true')
 
@@ -444,17 +444,43 @@ def cli_enable_ucaas_csta_sessions_monitored(sessions):
 
 
 @cli.command('systemLaw')
-@click.option('--law', help='System law', default='A_Law')
+@click.option('--law', help='System law', type=click.Choice(['Law_A', 'Law_Mu']), default='Law_A')
 def cli_system_law(law):
     token, host = oxe_get_auth_from_cache()
     oxe_system_law(host, token, law)
 
 
 @cli.command('systemCompression')
-@click.option('--compression', help='System compression', default='G_729')
+@click.option('--compression', help='System compression', type=click.Choice(['G_729', 'G_723']), default='G_729')
 def cli_system_compression(compression):
     token, host = oxe_get_auth_from_cache()
     oxe_system_compression_type(host, token, compression)
+
+
+@cli.command('reportNodeNumber')
+@click.option('--ip', help='OXE IP address', default=None)
+@click.option('--port', help='OXE SSH port', default=22)
+@click.option('--password', help='mtcl password', default='mtcl')
+def cli_report_node_number(ip, port, password):
+    token, host = oxe_get_auth_from_cache()
+    if ip is not None:
+        node_number = oxe_netdata_get(ip, 'NODE_NBER', port, password)
+    else:
+        node_number = oxe_netdata_get(host, 'NODE_NBER', port, password)
+    oxe_system_node_number(host, token, node_number)
+
+
+@cli.command('reportNetNumber')
+@click.option('--ip', help='OXE IP address', default=None)
+@click.option('--port', help='OXE SSH port', default=22)
+@click.option('--password', help='mtcl password', default='mtcl')
+def cli_report_node_number(ip, port, password):
+    token, host = oxe_get_auth_from_cache()
+    if ip is not None:
+        net_number = oxe_netdata_get(ip, 'NET_NBER', port, password)
+    else:
+        net_number = oxe_netdata_get(host, 'NET_NBER', port, password)
+    oxe_system_network_number(host, token, net_number)
 
 
 # OMS management

@@ -127,7 +127,8 @@ Rainbow connection methods
     + pyoxeconf_cli rainbowReconnect --pbxId 'PBXd513-58ac-2d51-4737-a3a8-6b1e-6926-9e14'
     + pyoxeconf_cli rainbowReconnect --ini --filename OXE1.ini
 
-* update ccca.cfg for rainbow test environment ALL-IN-ONE (SSH)
+
+* update ccca.cfg specific for rainbow test environment ALL-IN-ONE (SSH)
 
     + pyoxeconf_cli updateCccaCfg --ip 10.100.8.14 --port 22 --password mtcl --apiserver alexantr-agent.openrainbow.org
 
@@ -177,6 +178,36 @@ Translator
 
     + pyoxeconf_cli createDpnssPrefix
     + pyoxeconf_cli createDpnssPrefix --dpnss A1000
+
+
+
+System Parameters
+-----------------
+
+* enable UcaasCstaMonitored (WBM)
+
+    + pyoxeconf_cli enableUcaasCstaMonitored (by default set session to max=20000)
+    + pyoxeconf_cli enableUcaasCstaMonitored --sessions 1000
+
+* set system law
+
+    + pyoxeconf_cli systemLaw (by default set A_LAW)
+    + pyoxeconf_cli systemLaw --law A_LAW
+    + pyoxeconf_cli systemLaw --law MU_LAW
+
+* set system compression
+
+    + pyoxeconf_cli systemCompression (by default set G_729)
+    + pyoxeconf_cli systemCompression --compression G729
+    + pyoxeconf_cli systemCompression --compression G723
+
+* report node number from netadmin settings
+
+    + pyoxeconf_cli reportNodeNumber
+
+* report network number from netadmin settings
+
+    + pyoxeconf_cli reportNetNumber
 
 
 
@@ -278,9 +309,6 @@ SIPp
 ToDo List
 ---------
 
-    * netadmin DNS (mandatory for Rainbow)
-    * netadmin Proxy (mandatory for Rainbow)
-    * proxy management for API based command
     * Mevo 4645 management
     * Swinst:
         + stop/start telephone
@@ -314,9 +342,9 @@ Rainbow Tests Env Prep
 * Connect OXE for the first time to Rainbow
 
     + pyoxeconf_cli connect --host 10.100.8.14
-    + pyoxeconf_cli rainbowConnect --ini --filename oxe5.ini
-    + *start data collect*
+    + *start data collect if test 1st connection scenario*
     + pyoxeconf_cli updateCccaCfg --ip 10.100.8.14 --apiserver agent-fabien.openrainbow.org
+    + pyoxeconf_cli rainbowConnect --ini --filename oxe5.ini
     + pyoxeconf_cli logout
 
 
@@ -326,9 +354,9 @@ Rainbow Tests Env Prep
     + pyoxeconf_cli rainbowDisconnect
     + pyoxeconf_cli purgeCccaCfg --ip 10.100.8.14
     + Update OXE directory *pyoxeconf_cli deleteUsers or pyoxeconf_cli createUsers*
-    + pyoxeconf_cli rainbowConnect --ini --filename oxe6.ini
-    + *start data collect*
+    + *start data collect if test 1st connection scenario*
     + pyoxeconf_cli updateCccaCfg --ip 10.100.8.14 --apiserver agent-fabien.openrainbow.org
+    + pyoxeconf_cli rainbowConnect --ini --filename oxe6.ini
     + pyoxeconf_cli logout
 
 
