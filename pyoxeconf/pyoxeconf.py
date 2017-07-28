@@ -558,7 +558,7 @@ def cli_oxe_translator_prefix_create_dpnss(dpnss):
 @click.option('--ip', help='OXE IP address', default=None)
 @click.option('--port', help='OXE SSH port', default=22)
 @click.option('--password', help='mtcl password', default='mtcl')
-def cli_oxe_translator_prefix_create_dpnss(**kwargs):
+def cli_oxe_create_voice_mail(**kwargs):
     token, host = oxe_get_auth_from_cache()
     vm_number = kwargs.get('number')
     vm_accesses = kwargs.get('accesses')
@@ -572,6 +572,12 @@ def cli_oxe_translator_prefix_create_dpnss(**kwargs):
     vm_create_eva_cfg(host, port, password, vm_accesses)
     vm_create_eva_access(host, port, password, vm_accesses)
     vm_create(host, token, vm_accesses, vm_number, vm_name, vm_index, 'embedded')
+
+
+@cli.command('delete4645')
+def cli_oxe_delete_voice_mail():
+    token, host = oxe_get_auth_from_cache()
+    vm_create(host, token, vm_number='')
 
 
 # netadmin management
