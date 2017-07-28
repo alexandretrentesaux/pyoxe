@@ -22,6 +22,7 @@ from pyoxeconf.oxe_shelves import *
 from pyoxeconf.oxe_systems import *
 from pyoxeconf.oxe_ip_domains import *
 from pyoxeconf.oxe_translator import *
+from pyoxeconf.oxe_voicemail import *
 from pyoxeconf.oxe_netadmin import *
 # from pyoxeconf.oxe_swinst import *
 from pyoxeconf.oms_config import *
@@ -545,6 +546,32 @@ def cli_oms_config(**kwargs):
 def cli_oxe_translator_prefix_create_dpnss(dpnss):
     token, host = oxe_get_auth_from_cache()
     oxe_translator_prefix_create_dpnss(host, token, dpnss)
+
+
+# 4645 management
+
+@cli.command('create4645')
+@click.option('--number', help='Voice mail number', default=6000)
+@click.option('--accesses', help='Voice mail accesses', default=15)
+@click.option('--directory', help='Voice mail directory name', default='voicemail')
+@click.option('--index', help='Voice mail index', default=1)
+@click.option('--ip', help='OXE IP address', default=None)
+@click.option('--port', help='OXE SSH port', default=22)
+@click.option('--password', help='mtcl password', default='mtcl')
+def cli_oxe_translator_prefix_create_dpnss(**kwargs):
+    token, host = oxe_get_auth_from_cache()
+    vm_number = kwargs.get('number')
+    vm_accesses = kwargs.get('accesses')
+    vm_name = kwargs.get('directory')
+    vm_index = kwargs.get('index')
+    ip = kwargs.get('ip')
+    if ip is None:
+        ip = host
+    port = kwargs.get('port')
+    password = kwargs.get('password')
+    vm_create_eva_cfg(host, port, password, vm_accesses)
+    vm_create_eva_access(host, port, password, vm_accesses)
+    vm_create(host, token, vm_accesses, vm_number, vm_name, vm_index, 'embedded')
 
 
 # netadmin management
