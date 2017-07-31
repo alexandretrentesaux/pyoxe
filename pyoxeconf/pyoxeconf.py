@@ -406,7 +406,9 @@ def cli_system_law(law):
 @cli.command('systemCompression')
 @click.option('--compression',
               help='System compression',
-              type=click.Choice(oxe_model['definitions']['Compression_Type']['values']),
+              type=click.Choice(oxe_model['Node']['subClasses']['System_Parameters']['subClasses']
+                                ['System_Parameters_2']['subClasses']['Compression_Parameters']['attributes']
+                                ['Compression_Type']['type']['values']),
               default='G_729')
 def cli_system_compression(compression):
     token, host = oxe_get_auth_from_cache()
