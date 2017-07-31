@@ -390,7 +390,7 @@ def cli_enable_sip(trkid):
 @click.option('--sessions', help='CSTA sessions monitored', default=20000)
 def cli_enable_ucaas_csta_sessions_monitored(sessions):
     token, host = oxe_get_auth_from_cache()
-    oxe_system_csta_sessions_monitored(host, token, sessions)
+    oxe_system_ucaas_csta_sessions_monitored(host, token, sessions)
 
 
 @cli.command('systemLaw')
@@ -612,7 +612,7 @@ def cli_customize_sipp_uac_register_xml(filename, registrationtimer):
 
 
 # pilot2a management
-#  todo: manage all prerequistes for pilot2a use
+# todo: manage all prerequistes for pilot2a use
 
 
 # nginx rp management
@@ -626,15 +626,4 @@ def cli_create_nginx_rp_config(host, domain, cert, key, bindip):
     if host is None:
         print('--host option is mandatory. Exiting ...')
         exit(-1)
-    nginx_rp_oxe_config(host, domain, cert, key, bindip))
-
-
-# # test on OmniPCX Data Model
-# @cli.command('dataModel')
-# @click.option('--pattern', help='search pattern')
-# def cli_data_model(pattern):
-#     print(json.dumps(oxe_model['definitions']['Station_Type']['values'], indent=2))
-#     if pattern in oxe_model['definitions']['Station_Type']['values']:
-#         print('Valid Set Type: ' + pattern)
-#     else:
-#         print('Unknown Set Type: ' + pattern)
+    nginx_rp_oxe_config(host, domain, cert, key, bindip)
