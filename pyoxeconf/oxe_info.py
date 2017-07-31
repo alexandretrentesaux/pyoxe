@@ -25,6 +25,8 @@ def oxe_get_json_model(host, token):
     for chunk in response.iter_content(chunk_size=1024):
         if chunk:
             result += chunk.decode('utf-8')
+    # todo: transcode false to 'false'
+    # todo: transcode true to 'true'
     return result
 
 

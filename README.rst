@@ -130,7 +130,7 @@ Rainbow connection methods
 
 * update ccca.cfg specific for rainbow test environment ALL-IN-ONE (SSH)
 
-    + pyoxeconf_cli updateCccaCfg --ip 10.100.8.14 --port 22 --password mtcl --apiserver alexantr-agent.openrainbow.org
+    + pyoxeconf_cli updateCccaCfg --ip 10.100.8.14 --port 22 --password mtcl --apiServer alexantr-agent.openrainbow.org
 
 
 
@@ -298,7 +298,7 @@ SIPp
 
 * Create UAC dictionary (csv) for SIPp scripts
 
-    + pyoxeconf_cli sippCreateCsv --rangeSize 2000 --rangeStart 70000 --ip 10.100.8.11
+    + pyoxeconf_cli sippCreateCsv --rangeSize 2000 --rangeStart 70000 --callServer 10.100.8.11
 
 * Customize registration timer in SIPp UAC register script
 
@@ -343,7 +343,7 @@ Rainbow Tests Env Prep
 
     + pyoxeconf_cli connect --host 10.100.8.14
     + *start data collect if test 1st connection scenario*
-    + pyoxeconf_cli updateCccaCfg --ip 10.100.8.14 --apiserver agent-fabien.openrainbow.org
+    + pyoxeconf_cli updateCccaCfg --ip 10.100.8.14 --apiServer agent-fabien.openrainbow.org
     + pyoxeconf_cli rainbowConnect --ini --filename oxe5.ini
     + pyoxeconf_cli logout
 
@@ -355,7 +355,7 @@ Rainbow Tests Env Prep
     + pyoxeconf_cli purgeCccaCfg --ip 10.100.8.14
     + Update OXE directory *pyoxeconf_cli deleteUsers or pyoxeconf_cli createUsers*
     + *start data collect if test 1st connection scenario*
-    + pyoxeconf_cli updateCccaCfg --ip 10.100.8.14 --apiserver agent-fabien.openrainbow.org
+    + pyoxeconf_cli updateCccaCfg --ip 10.100.8.14 --apiServer agent-fabien.openrainbow.org
     + pyoxeconf_cli rainbowConnect --ini --filename oxe6.ini
     + pyoxeconf_cli logout
 

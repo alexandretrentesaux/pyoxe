@@ -76,7 +76,7 @@ def oxe_system_accept_mu_a_laws_in_sip(host, token, mode):
     return modification.status_code
 
 
-def oxe_system_csta_sessions_monitored(host, token, max_session):
+def oxe_system_ucaas_csta_sessions_monitored(host, token, max_session):
     payload = {
         'CSTA_Requests_monitored': max_session
     }
