@@ -309,12 +309,13 @@ SIPp
 ToDo List
 ---------
 
-    * Mevo 4645 management
+    * Mevo 4645 management (to test)
     * Swinst:
         + stop/start telephone
         + set autostart
         + install delivery from network
         + install OPS
+    * build URL outside API requests to allow customization (for example http or https scheme, ...)
 
 
 

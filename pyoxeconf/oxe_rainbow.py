@@ -1,4 +1,4 @@
-"""Summary"""
+"""Rainbow settings methods"""
 import configparser
 import pprint
 import requests
@@ -10,37 +10,47 @@ from pyoxeconf.oxe_access import oxe_set_headers
 
 
 def oxe_get_rainbow_config(filename=None):
-    """Summary
+    """Retrieve Rainbow configuration from ini file
 
-    Returns:
-        TYPE: Description
+    Args:
+        filename (STR): config file name
     """
+
     config = configparser.ConfigParser()
     if filename is None:
-        config.read(tempfile.gettempdir() + 'oxe.ini')
+        full_path = os.path.join(tempfile.gettempdir() + 'oxe.ini')
     else:
-        config.read(os.path.join(tempfile.gettempdir(), filename))
-    rainbow_domain = config.get('default', 'rainbow_domain', raw=False)
-    pbx_id = config.get('default', 'pbx_id', raw=False)
-    rainbow_temp_password = config.get('default', 'rainbow_temp_password', raw=False)
-    rainbow_host = config.get('default', 'rainbow_host', raw=False)
-    return rainbow_domain, pbx_id, rainbow_temp_password, rainbow_host
+        full_path = os.path.join(tempfile.gettempdir(), filename)
+    if os.path.exists(full_path):
+        with open(full_path, 'r') as file:
+            config.read(file)
+            rainbow_domain = config.get('default', 'rainbow_domain', raw=False)
+            pbx_id = config.get('default', 'pbx_id', raw=False)
+            rainbow_temp_password = config.get('default', 'rainbow_temp_password', raw=False)
+            rainbow_host = config.get('default', 'rainbow_host', raw=False)
+            return rainbow_domain, pbx_id, rainbow_temp_password, rainbow_host
+    elif IOError:
+        print('Rainbow config file does not exists')
+        exit(-1)
 
 
 def oxe_rainbow_connect(host, token, rainbow_domain, pbx_id, temp_password, phone_book):
-    """Summary
+    """Set settings for Rainbow connection.
+
+    Not sufficient for AIO: updateCccaCfg must used in addition to this command
 
     Args:
-        host (TYPE): Description
-        token (TYPE): Description
-        rainbow_domain (TYPE): Description
-        pbx_id (TYPE): Description
-        temp_password (TYPE): Description
-        phone_book (TYPE): Description
+        host (STR): OmniPCX Enterprise IP address / FQDN
+        token (STR): Authentication token
+        rainbow_domain (STR): Rainbow domain
+        pbx_id (STR): PBX ID
+        temp_password (STR): Activation code
+        phone_book (STR): YES/NO Phone book processing
 
     Returns:
-        TYPE: Description
+        INT: API request status code
     """
+
     requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
     payload = {
         'Rainbow_Agent_Enable': 'Yes',
@@ -49,6 +59,7 @@ def oxe_rainbow_connect(host, token, rainbow_domain, pbx_id, temp_password, phon
         'Rainbow_Temp_Password': temp_password,
         'Rainbow_Use_PhoneBook': phone_book.capitalize()
     }
+
     try:
         response = requests.put('https://' + host + '/api/mgt/1.0/Node/1/RAINBOW/1',
                                 headers=oxe_set_headers(token, 'PUT'),
@@ -61,32 +72,30 @@ def oxe_rainbow_connect(host, token, rainbow_domain, pbx_id, temp_password, phon
 
 
 def oxe_rainbow_disconnect(host, token):
-    """Summary
+    """Disconnect OXE from Rainbow
 
     Args:
-        host (TYPE): Description
-        token (TYPE): Description
+        host (STR): OmniPCX Enterprise IP address / FQDN
+        token (STR): Authentication token
 
     Returns:
-        TYPE: Description
+        INT: API request status code
     """
+
     requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
-    payload = {
-        'Rainbow_Agent_Enable': 'No'
-    }
+    # Pay attention in M1.403.15.h disabling rainbow agent also restore Rainbow domain to default value
+    payload = {'Rainbow_Agent_Enable': 'No'}
+    url = 'https://' + host + '/api/mgt/1.0/Node/1/RAINBOW/1'
+
     try:
-        response = requests.put('https://' + host + '/api/mgt/1.0/Node/1/RAINBOW/1',
-                                headers=oxe_set_headers(token, 'PUT'),
-                                json=payload,
-                                verify=False
-                                )
+        response = requests.put(url, headers=oxe_set_headers(token, 'PUT'), json=payload, verify=False)
     except requests.exceptions.RequestException as e:
         pprint.pprint(e)
     return response.status_code
 
 
 def oxe_rainbow_reconnect(host, token, pbx_id, rainbow_domain):
-    """Summary
+    """Reconnect OXE to rainbow
 
     Args:
         host (TYPE): Description

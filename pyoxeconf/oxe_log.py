@@ -21,8 +21,8 @@ def oxe_log_sh(host, port, password):
     #   mkdir -p /DHS3bin/mtcl/tests
     #   su -
     #   chmod a+x /usr/sbin/tcpdump
-    #   logout
-    #   logout
+    #   exit
+    #   exit
 
 
 def start_log(host, password, test_name):

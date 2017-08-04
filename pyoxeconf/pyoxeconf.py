@@ -59,7 +59,7 @@ def print_version(ctx, param, value):
     if not value or ctx.resilient_parsing:
         return
     pprint.pprint(pkg_resources.require("pyoxeconf")[0])
-    click.echo('pyoxeconfgen_cli version: {}'.format(__version__))
+    click.echo('pyoxeconf_cli version: {}'.format(__version__))
     ctx.exit()
 
 
