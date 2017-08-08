@@ -266,8 +266,8 @@ def cli_oxe_rainbow_rainbow_reconnect(pbxid, rainbowdomain, ini, filename):
             print('--rainbowDomain option is mandatory. Exiting ...')
             exit(-1)
     else:
-        rainbow_domain, pbx_id, activation_code, rainbow_host = oxe_get_rainbow_config(filename)
-    oxe_rainbow_reconnect(host, token, pbx_id, rainbow_domain)
+        rainbowdomain, pbxid, activation_code, rainbow_host = oxe_get_rainbow_config(filename)
+    oxe_rainbow_reconnect(host, token, pbxid, rainbowdomain)
 
 
 @cli.command('updateCccaCfg')
