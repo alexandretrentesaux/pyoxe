@@ -22,16 +22,26 @@ def oxe_configure(host, login, password, proxies):
         proxies (json): proxies
     """
 
-    config = configparser.RawConfigParser()
-    config.add_section('default')
-    config.set('default', 'host', str(host))
-    config.set('default', 'login', str(login))
-    config.set('default', 'password', str(password))
+    config = configparser.ConfigParser()
+    full_path = os.path.join(tempfile.gettempdir(), 'pyoxeconf.ini')
+
+    if os.path.exists(full_path):
+        config.read(full_path)
+
+    if config.has_section('default') is False:
+        config.add_section('default')
+
+    if config.has_section(str(host)) is False:
+        config.add_section(str(host))
+    config.set(str(host), 'host', str(host))
+    config.set(str(host), 'login', str(login))
+    config.set(str(host), 'password', str(password))
 
     if proxies is not None:
-        config.add_section('proxies')
+        if config.has_section('proxies') is False:
+            config.add_section('proxies')
         config.set('proxies', 'proxies', proxies)
-    full_path = os.path.join(tempfile.gettempdir(), 'pyoxeconf.ini')
+
     with open(full_path, 'w+') as file:
         try:
             config.write(file)
@@ -42,7 +52,7 @@ def oxe_configure(host, login, password, proxies):
 
 
 # get connection info from config file
-def oxe_get_config():
+def oxe_get_config(host=None):
     """Summary
 
     Returns:
@@ -54,10 +64,10 @@ def oxe_get_config():
 
     if os.path.exists(full_path):
         config.read(full_path)
-        if config.has_section('default'):
-            oxe_ip = config.get('default', 'host', raw=False)
-            login = config.get('default', 'login', raw=False)
-            password = config.get('default', 'password', raw=False)
+        if config.has_section(str(host)):
+            # oxe_ip = config.get(str(host), 'host', raw=False)
+            # login = config.get(str(host), 'login', raw=False)
+            password = config.get(str(host), 'password', raw=False)
         else:
             print('Inconsistent config file: {}'.format(full_path))
             exit(-1)
@@ -65,26 +75,26 @@ def oxe_get_config():
             proxies = config.get('proxies', 'proxies', raw=True)
         else:
             proxies = None
-        return oxe_ip, login, password, proxies
+        return password, proxies
     elif IOError:
         print('error opening file: {}'.format(full_path))
         exit(-1)
 
 
 # store authentication token
-def oxe_get_auth_from_cache():
+def oxe_get_auth_from_cache(host):
     """Summary
 
     Returns:
         TYPE: Description
     """
-
+    config = configparser.ConfigParser()
     full_path = os.path.join(tempfile.gettempdir(), '.pyoxeconf')
 
     if os.path.exists(full_path):
-        with open(full_path, 'r') as file:
-            tmp = json.loads(file.read())
-            return tmp['token'], tmp['oxe_ip']
+        config.read(full_path)
+        if config.has_section(str(host)):
+            return config.get(str(host), 'token', raw=False)
     elif IOError:
         print('error opening file: {}'.format(full_path))
         exit(-1)
@@ -134,6 +144,7 @@ def oxe_authenticate(host, login, password, proxies=None):
     # Authentication through WBM API
     requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
     url = 'https://' + host + '/api/mgt/1.0/login'
+    full_path = os.path.join(tempfile.gettempdir(), '.pyoxeconf')
 
     authentication = requests.get(url, timeout=10, auth=(login, password), verify=False, proxies=proxies)
     if authentication.status_code == 401:
@@ -145,15 +156,50 @@ def oxe_authenticate(host, login, password, proxies=None):
         sys.exit(-1)
 
     # Cache authentication data for later use in other CLI commands
-    data = {'oxe_ip': host, 'token': authentication.json()['token']}
-    with open(os.path.join(tempfile.gettempdir(), '.pyoxeconf'), 'w+') as file:
-            file.write(json.dumps(data))
+    config = configparser.ConfigParser()
+
+    if os.path.exists(full_path):
+        config.read(full_path)
+
+    if config.has_section('default') is False:
+        config.add_section('default')
+
+    if config.has_section(str(host)) is False:
+        config.add_section(str(host))
+    config.set(str(host), 'token', str(authentication.json()['token']))
+
+    auth_write_cache(full_path, config)
 
     return authentication.json()
 
 
-# OXE WBM logout + clear JWT cache
-def oxe_logout():
+# OXE WBM logout
+def oxe_logout(host):
+    config = configparser.ConfigParser()
+    full_path = os.path.join(tempfile.gettempdir(), '.pyoxeconf')
+
+    if os.path.exists(full_path):
+        config.read(full_path)
+
+    if config.has_section(str(host)):
+        config.remove_section(str(host))
+        auth_write_cache(full_path, config)
+    else:
+        print('You\'re already logout from OXE {}'.format(str(host)))
+
+
+def auth_write_cache(path, config):
+    with open(path, 'w+') as file:
+        try:
+            config.write(file)
+            os.chmod(path, 0o600)
+        except configparser.Error as e:
+            print('Error writing config file: {}'.format(path))
+            exit(-1)
+
+
+# All OXE WBM logout
+def oxe_logout_all():
     """Logout from WBM"""
 
     # clear cache
