@@ -17,18 +17,25 @@ def oxe_get_rainbow_config(filename=None):
     """
 
     config = configparser.ConfigParser()
+
     if filename is None:
         full_path = os.path.join(tempfile.gettempdir() + 'oxe.ini')
     else:
         full_path = os.path.join(tempfile.gettempdir(), filename)
+
+    print('DEBUG: trying to open ini file: {}'.format(full_path))
+
     if os.path.exists(full_path):
-        with open(full_path, 'r') as file:
-            config.read(file)
+        config.read(full_path)
+        if config.has_section('default'):
             rainbow_domain = config.get('default', 'rainbow_domain', raw=False)
             pbx_id = config.get('default', 'pbx_id', raw=False)
             rainbow_temp_password = config.get('default', 'rainbow_temp_password', raw=False)
             rainbow_host = config.get('default', 'rainbow_host', raw=False)
             return rainbow_domain, pbx_id, rainbow_temp_password, rainbow_host
+        else:
+            print('Corrupted rainbow config file')
+            exit(-1)
     elif IOError:
         print('Rainbow config file does not exists')
         exit(-1)
