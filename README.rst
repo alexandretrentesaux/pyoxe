@@ -358,18 +358,6 @@ Rainbow Tests Env Prep
     + pyoxeconf_cli logout --host 10.100.8.14
 
 
-* Connect OXE already connected to Rainbow solution as a new Rainbow system
-
-    + pyoxeconf_cli connect --host 10.100.8.14
-    + pyoxeconf_cli rainbowDisconnect --host 10.100.8.14
-    + pyoxeconf_cli purgeCccaCfg --host 10.100.8.14
-    + Update OXE directory *pyoxeconf_cli deleteUsers or pyoxeconf_cli createUsers*
-    + *start data collect if test 1st connection scenario*
-    + pyoxeconf_cli updateCccaCfg --host 10.100.8.14 --apiServer agent-fabien.openrainbow.org
-    + pyoxeconf_cli rainbowConnect --host 10.100.8.14 --ini --filename oxe6.ini
-    + pyoxeconf_cli logout --host 10.100.8.14
-
-
 * Disconnect OXE from Rainbow solution
 
     + pyoxeconf_cli connect --host 10.100.8.14
@@ -377,14 +365,24 @@ Rainbow Tests Env Prep
     + pyoxeconf_cli logout --host 10.100.8.14
 
 
+* Connect OXE already connected to Rainbow solution as a new Rainbow system
+
+    + pyoxeconf_cli connect --host 10.100.8.14
+    + pyoxeconf_cli purgeCccaCfg --host 10.100.8.14
+    + pyoxeconf_cli updateCccaCfg --host 10.100.8.14 --apiServer agent-fabien.openrainbow.org
+    + pyoxeconf_cli rainbowConnect --host 10.100.8.14 --ini --filename oxe6.ini
+    + pyoxeconf_cli logout --host 10.100.8.14
+
+
 * Reconnect an OXE to Rainbow Solution
 
     + pyoxeconf_cli connect --host 10.100.8.14
-    + pyoxeconf_cli rainbowReconnect --host 10.100.8.14 --pbxId PBX4867-d7dc-fe11-4445-8dc8-743b-4d31-ca4b --rainbowDomain fabien-all-in-one-dev-1.opentouch.cloud
+    + pyoxeconf_cli rainbowReconnect --host 10.100.8.14 --ini --filename oxe6.ini
     + pyoxeconf_cli logout --host 10.100.8.14
 
 
 * Example of simultaneous 1st connection to Rainbow on multiple OXE
+
     + pyoxeconf_cli connect --host 10.100.8.10
     + pyoxeconf_cli connect --host 10.100.8.11
     + pyoxeconf_cli connect --host 10.100.8.12
