@@ -331,7 +331,7 @@ ToDo List
 Rainbow Tests Env Prep
 ======================
 
-* Prepare OXE for first use
+* **Prepare OXE for first use**
 
     + pyoxeconf_cli connect --host 10.100.8.14
     + pyoxeconf_cli wbmRequestsLimit --host 10.100.8.14 --port 22 --password mtcl --rootPassword myrootpasswd *(reboot needed)*
@@ -349,7 +349,7 @@ Rainbow Tests Env Prep
     + pyoxeconf_cli logout --host 10.100.8.14
 
 
-* Connect OXE for the first time to Rainbow
+* **Connect OXE for the first time to Rainbow**
 
     + pyoxeconf_cli connect --host 10.100.8.14
     + *start data collect if test 1st connection scenario*
@@ -358,21 +358,21 @@ Rainbow Tests Env Prep
     + pyoxeconf_cli logout --host 10.100.8.14
 
 
-* Disconnect OXE from Rainbow solution
+* **Disconnect OXE from Rainbow solution**
 
     + pyoxeconf_cli connect --host 10.100.8.14
     + pyoxeconf_cli rainbowDisconnect --host 10.100.8.14
     + pyoxeconf_cli logout --host 10.100.8.14
 
 
-        * Reconnect an OXE to Rainbow Solution
+        * **Reconnect an OXE to Rainbow Solution**
 
             + pyoxeconf_cli connect --host 10.100.8.14
             + pyoxeconf_cli rainbowReconnect --host 10.100.8.14 --ini --filename oxe6.ini
             + pyoxeconf_cli logout --host 10.100.8.14
 
 
-        * Connect OXE already connected to Rainbow solution as a new Rainbow system
+        * **Connect OXE already connected to Rainbow solution as a new Rainbow system**
 
             + pyoxeconf_cli connect --host 10.100.8.14
             + pyoxeconf_cli purgeCccaCfg --host 10.100.8.14
@@ -381,7 +381,7 @@ Rainbow Tests Env Prep
             + pyoxeconf_cli logout --host 10.100.8.14
 
 
-* Example of simultaneous 1st connection to Rainbow on multiple OXE
+* **Example of simultaneous 1st connection to Rainbow on multiple OXE**
 
     + pyoxeconf_cli connect --host 10.100.8.10
     + pyoxeconf_cli connect --host 10.100.8.11
