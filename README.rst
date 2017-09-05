@@ -365,20 +365,20 @@ Rainbow Tests Env Prep
     + pyoxeconf_cli logout --host 10.100.8.14
 
 
-* Connect OXE already connected to Rainbow solution as a new Rainbow system
+    * Reconnect an OXE to Rainbow Solution
 
-    + pyoxeconf_cli connect --host 10.100.8.14
-    + pyoxeconf_cli purgeCccaCfg --host 10.100.8.14
-    + pyoxeconf_cli updateCccaCfg --host 10.100.8.14 --apiServer agent-fabien.openrainbow.org
-    + pyoxeconf_cli rainbowConnect --host 10.100.8.14 --ini --filename oxe6.ini
-    + pyoxeconf_cli logout --host 10.100.8.14
+        + pyoxeconf_cli connect --host 10.100.8.14
+        + pyoxeconf_cli rainbowReconnect --host 10.100.8.14 --ini --filename oxe6.ini
+        + pyoxeconf_cli logout --host 10.100.8.14
 
 
-* Reconnect an OXE to Rainbow Solution
+    * Connect OXE already connected to Rainbow solution as a new Rainbow system
 
-    + pyoxeconf_cli connect --host 10.100.8.14
-    + pyoxeconf_cli rainbowReconnect --host 10.100.8.14 --ini --filename oxe6.ini
-    + pyoxeconf_cli logout --host 10.100.8.14
+        + pyoxeconf_cli connect --host 10.100.8.14
+        + pyoxeconf_cli purgeCccaCfg --host 10.100.8.14
+        + pyoxeconf_cli updateCccaCfg --host 10.100.8.14 --apiServer agent-fabien.openrainbow.org
+        + pyoxeconf_cli rainbowConnect --host 10.100.8.14 --ini --filename oxe6.ini
+        + pyoxeconf_cli logout --host 10.100.8.14
 
 
 * Example of simultaneous 1st connection to Rainbow on multiple OXE
