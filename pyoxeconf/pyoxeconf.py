@@ -63,6 +63,12 @@ def print_version(ctx, param, value):
     ctx.exit()
 
 
+def check_host_option(host):
+    if host is None:
+        print('--host option is mandatory')
+        exit(-1)
+
+
 # CLI
 @click.group(cls=AliasedGroup, context_settings=CONTEXT_SETTINGS)
 @click.option('-V',
@@ -83,9 +89,7 @@ def cli():
 @click.option('--password', help='mtcl password', default='mtcl')
 @click.option('--proxies', help='API server FQDN', default=None)
 def cli_oxe_access_configure(host, password, proxies):
-    if host is None:
-        print('--host option is mandatory')
-        exit(-1)
+    check_host_option(host)
     oxe_configure(host, 'mtcl', password, proxies)
 
 
@@ -95,9 +99,7 @@ def cli_oxe_access_configure(host, password, proxies):
 @click.option('--proxies', help='API server FQDN', default=None)
 @click.option('--ini', help='Config File', is_flag=True)
 def cli_oxe_access_connect(host, password, proxies, ini):
-    if host is None:
-        print('--host option is mandatory')
-        exit(-1)
+    check_host_option(host)
     if ini is not None:
         password, proxies = oxe_get_config(str(host))
     oxe_authenticate(host, 'mtcl', password, proxies)
@@ -115,9 +117,7 @@ def cli_oxe_access_logout(host):
 @click.option('--password', help='mtcl password', default='mtcl')
 @click.option('--rootPassword', help='root password', default='letacla')
 def cli_oxe_access_wbm_requests_limit(host, port, password, rootpassword):
-    if host is None:
-        print('--host option is mandatory. Exiting ...')
-        exit(-1)
+    check_host_option(host)
     oxe_wbm_update_requests_quota(host, port, password, rootpassword)
 
 
@@ -126,9 +126,7 @@ def cli_oxe_access_wbm_requests_limit(host, port, password, rootpassword):
 @click.option('--port', help='OXE SSH port', default=22)
 @click.option('--password', help='mtcl password', default='mtcl')
 def cli_wbm_restart(host, port, password):
-    if host is None:
-        print('--host option is mandatory. Exiting ...')
-        exit(-1)
+    check_host_option(host)
     oxe_wbm_restart(host, port, password)
 
 
@@ -137,13 +135,11 @@ def cli_wbm_restart(host, port, password):
 @cli.command('getJsonModel')
 @click.option('--host', help='OXE IP address / FQDN', default=None)
 def cli_get_json_model(host):
-    if host is None:
-        print('--host option is mandatory')
-        exit(-1)
+    check_host_option(host)
     token = oxe_get_auth_from_cache(str(host))
     json_model = json.loads(oxe_get_json_model(host, token))
-    horodating = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-    with open(os.path.join(tempfile.gettempdir(), 'OXE_' + host + '_' + horodating + '.json'), 'w') as fh:
+    timestamp = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+    with open(os.path.join(tempfile.gettempdir(), 'OXE_' + host + '_' + timestamp + '.json'), 'w') as fh:
         fh.write(json.dumps(json_model, indent=2, sort_keys=True))
 
 
@@ -160,18 +156,12 @@ def cli_get_json_model(host):
 @click.option('--companyId', help='Company Index', default=1)
 @click.option('--sipp', help='Generate SIPp csv file', is_flag=True)
 def cli_create_users(host, rangesize, rangestart, settype, companyid, sipp):
-    if host is None:
-        print('--host option is mandatory')
-        exit(-1)
+    check_host_option(host)
     token = oxe_get_auth_from_cache(host)
     bar = progressbar.ProgressBar()
     for extension_number in bar(range(int(rangestart), int(rangestart) + int(rangesize))):
-        if companyid < 10:
-            last_name = 'LC0' + str(companyid) + 'U' + str(extension_number)
-            first_name = 'FC0' + str(companyid) + 'U' + str(extension_number)
-        else:
-            last_name = 'LC0' + str(companyid) + 'U' + str(extension_number)
-            first_name = 'FC0' + str(companyid) + 'U' + str(extension_number)
+        last_name = 'LC' + '{:02}'.format(companyid) + 'U' + str(extension_number)
+        first_name = 'FC' + '{:02}'.format(companyid) + 'U' + str(extension_number)
         oxe_create_user(host, token, extension_number, last_name, first_name, settype, 10)
     if settype == 'SIP_Extension' and sipp is True:
         sipp_csv_generator(host + '_' + str(rangesize) + 'users', host, rangestart, rangesize, '0000')
@@ -182,9 +172,7 @@ def cli_create_users(host, rangesize, rangestart, settype, companyid, sipp):
 @click.option('--rangeSize', help='range of users to create', default=1)
 @click.option('--rangeStart', help='first internal number', default=8000)
 def cli_delete_users(host, rangesize, rangestart):
-    if host is None:
-        print('--host option is mandatory. Exiting ...')
-        exit(-1)
+    check_host_option(host)
     token = oxe_get_auth_from_cache(host)
     bar = progressbar.ProgressBar()
     for extension_number in bar(range(int(rangestart), int(rangestart) + int(rangesize))):
@@ -198,9 +186,7 @@ def cli_delete_users(host, rangesize, rangestart):
 @click.option('--alias', help='directory alias', default=255)
 def cli_create_phonebook_entries(host, rangesize, rangestart, alias):
     print('Debug ongoing, OXE API is not working properly with the following request\n')
-    if host is None:
-        print('--host option is mandatory. Exiting ...')
-        exit(-1)
+    check_host_option(host)
     token = oxe_get_auth_from_cache(host)
     bar = progressbar.ProgressBar()
     if 0 <= alias <= 15 or alias == 255:
@@ -223,9 +209,7 @@ def cli_create_phonebook_entries(host, rangesize, rangestart, alias):
 @click.option('--password', help='mtcl password / needed if --reboot', default='mtcl')
 @click.option('--swinstPassword', help='swinst password / needed if --reboot', default='SoftInst')
 def cli_oxe_licensing_set_flex_server(host, flexip, port, reboot, sshport, password, swinstpassword):
-    if host is None:
-        print('--host option is mandatory. Exiting ...')
-        exit(-1)
+    check_host_option(host)
     if flexip is None:
         print('--ip option is mandatory. Exiting ...')
         exit(-1)
@@ -247,9 +231,7 @@ def cli_oxe_licensing_set_flex_server(host, flexip, port, reboot, sshport, passw
 @click.option('--ini', help='config file use', is_flag=True)
 @click.option('--filename', help='config file name', default=None)
 def cli_oxe_rainbow_rainbow_connect(host, rainbowdomain, pbxid, phonebook, activationcode, ini, filename):
-    if host is None:
-        print('--host option is mandatory. Exiting ...')
-        exit(-1)
+    check_host_option(host)
     token = oxe_get_auth_from_cache(host)
     if ini is False:
         if rainbowdomain is None:
@@ -280,9 +262,7 @@ def cli_oxe_rainbow_rainbow_disconnect(host):
 @click.option('--ini', help='config file use', is_flag=True)
 @click.option('--filename', help='config file name', default=None)
 def cli_oxe_rainbow_rainbow_reconnect(host, pbxid, rainbowdomain, ini, filename):
-    if host is None:
-        print('--host option is mandatory. Exiting ...')
-        exit(-1)
+    check_host_option(host)
     token = oxe_get_auth_from_cache(host)
     if ini is False:
         if pbxid is None:
@@ -302,9 +282,7 @@ def cli_oxe_rainbow_rainbow_reconnect(host, pbxid, rainbowdomain, ini, filename)
 @click.option('--password', help='mtcl password', default='mtcl')
 @click.option('--apiServer', help='API server FQDN', default=None)
 def cli_oxe_rainbow_update_ccca_cfg(host, port, password, apiserver):
-    if host is None:
-        print('--host option is mandatory. Exiting ...')
-        exit(-1)
+    check_host_option(host)
     if apiserver is None:
         print('--apiServer option is mandatory. Exiting ...')
         exit(-1)
@@ -316,10 +294,18 @@ def cli_oxe_rainbow_update_ccca_cfg(host, port, password, apiserver):
 @click.option('--port', help='OXE SSH port', default=22)
 @click.option('--password', help='mtcl password', default='mtcl')
 def cli_oxe_rainbow_purge_ccca_cfg(host, port, password):
-    if host is None:
-        print('--host option is mandatory. Exiting ...')
-        exit(-1)
+    check_host_option(host)
     oxe_purge_ccca_cfg(host, port, password)
+
+
+@cli.command('purgeRainbowagentLogs')
+@click.option('--host', help='OXE IP address', default=None)
+@click.option('--port', help='OXE SSH port', default=22)
+@click.option('--password', help='mtcl password', default='mtcl')
+@click.option('--rootPassword', help='swinst password', default='letacla')
+def cli_purge_rainbowagent_logs(host, port, password):
+    check_host_option(host)
+    oxe_purge_rainbowagent_logs(host, port, password, root_password)
 
 
 # OXE information
@@ -329,9 +315,7 @@ def cli_oxe_rainbow_purge_ccca_cfg(host, port, password):
 @click.option('--port', help='OXE SSH port', default=22)
 @click.option('--password', help='mtcl password', default='mtcl')
 def cli_oxe_info_get_rainbow_agent_version(host, port, password):
-    if host is None:
-        print('--host option is mandatory. Exiting ...')
-        exit(-1)
+    check_host_option(host)
     oxe_get_rainbow_agent_version(host, port, password)
 
 
@@ -340,9 +324,7 @@ def cli_oxe_info_get_rainbow_agent_version(host, port, password):
 @click.option('--port', help='OXE SSH port', default=22)
 @click.option('--password', help='mtcl password', default='mtcl')
 def cli_oxe_version(host, port, password):
-    if host is None:
-        print('--host option is mandatory. Exiting ...')
-        exit(-1)
+    check_host_option(host)
     oxe_get_oxe_version(host, port, password)
 
 
@@ -354,9 +336,7 @@ def cli_oxe_version(host, port, password):
 @click.option('--password', help='mtcl password', default='mtcl')
 @click.option('--swinstPassword', help='swinst password', default='SoftInst')
 def cli_oxe_reboot(host, port, password, swinstpassword):
-    if host is None:
-        print('--host option is mandatory. Exiting ...')
-        exit(-1)
+    check_host_option(host)
     oxe_reboot(host, port, password, swinstpassword)
 
 
@@ -366,9 +346,7 @@ def cli_oxe_reboot(host, port, password, swinstpassword):
 @click.option('--password', help='mtcl password', default='mtcl')
 @click.option('--rootPassword', help='swinst password', default='letacla')
 def cli_kill_rainbow_agent(host, port, password, rootpassword):
-    if host is None:
-        print('--ip option is mandatory. Exiting ...')
-        exit(-1)
+    check_host_option(host)
     oxe_kill_rainbow_agent(host, port, password, rootpassword)
 
 
@@ -377,9 +355,7 @@ def cli_kill_rainbow_agent(host, port, password, rootpassword):
 @click.option('--port', help='OXE SSH port', default=22)
 @click.option('--password', help='mtcl password', default='mtcl')
 def cli_runmao(host, port, password):
-    if host is None:
-        print('--host option is mandatory. Exiting ...')
-        exit(-1)
+    check_host_option(host)
     oxe_runmao(host, port, password)
 
 
@@ -388,9 +364,7 @@ def cli_runmao(host, port, password):
 @click.option('--port', help='OXE SSH port', default=22)
 @click.option('--password', help='mtcl password', default='mtcl')
 def cli_runtel(host, port, password):
-    if host is None:
-        print('--host option is mandatory. Exiting ...')
-        exit(-1)
+    check_host_option(host)
     oxe_runtel(host, port, password)
 
 
@@ -400,9 +374,7 @@ def cli_runtel(host, port, password):
 @click.option('--host', help='OXE IP address / FQDN', default=None)
 @click.option('--trkId', help='Trunk ID for SIP', default=15)
 def cli_enable_sip(host, trkid):
-    if host is None:
-        print('--host option is mandatory. Exiting ...')
-        exit(-1)
+    check_host_option(host)
     token = oxe_get_auth_from_cache(host)
     oxe_sip_create_default_trunk_groups(host, token, trkid)
     oxe_sip_gateway(host, token, trkid)
@@ -420,9 +392,7 @@ def cli_enable_sip(host, trkid):
 @click.option('--host', help='OXE IP address / FQDN', default=None)
 @click.option('--sessions', help='CSTA sessions monitored', default=20000)
 def cli_enable_ucaas_csta_sessions_monitored(host, sessions):
-    if host is None:
-        print('--host option is mandatory. Exiting ...')
-        exit(-1)
+    check_host_option(host)
     token = oxe_get_auth_from_cache(host)
     oxe_system_ucaas_csta_sessions_monitored(host, token, sessions)
 
@@ -434,9 +404,7 @@ def cli_enable_ucaas_csta_sessions_monitored(host, sessions):
               type=click.Choice(oxe_model['definitions']['Law_MG']['values']),
               default='Law_A')
 def cli_system_law(host, law):
-    if host is None:
-        print('--host option is mandatory. Exiting ...')
-        exit(-1)
+    check_host_option(host)
     token = oxe_get_auth_from_cache(host)
     oxe_system_law(host, token, law)
 
@@ -450,9 +418,7 @@ def cli_system_law(host, law):
                                 ['Compression_Type']['type']['values']),
               default='G_729')
 def cli_system_compression(host, compression):
-    if host is None:
-        print('--host option is mandatory. Exiting ...')
-        exit(-1)
+    check_host_option(host)
     token = oxe_get_auth_from_cache(host)
     oxe_system_compression_type(host, token, compression)
 
@@ -462,9 +428,7 @@ def cli_system_compression(host, compression):
 @click.option('--port', help='OXE SSH port', default=22)
 @click.option('--password', help='mtcl password', default='mtcl')
 def cli_report_node_number(host, port, password):
-    if host is None:
-        print('--host option is mandatory. Exiting ...')
-        exit(-1)
+    check_host_option(host)
     token = oxe_get_auth_from_cache(host)
     node_number = oxe_netdata_get(host, 'NODE_NBER', port, password)
     oxe_system_node_number(host, token, node_number)
@@ -475,9 +439,7 @@ def cli_report_node_number(host, port, password):
 @click.option('--port', help='OXE SSH port', default=22)
 @click.option('--password', help='mtcl password', default='mtcl')
 def cli_report_node_number(host, port, password):
-    if host is None:
-        print('--host option is mandatory. Exiting ...')
-        exit(-1)
+    check_host_option(host)
     token = oxe_get_auth_from_cache(host)
     net_number = oxe_netdata_get(host, 'NET_NBER', port, password)
     oxe_system_network_number(host, token, net_number)
@@ -492,9 +454,7 @@ def cli_report_node_number(host, port, password):
               type=click.Choice(oxe_model['definitions']['Rack_Type_Media_Gateway']['values']),
               default=oxe_model['definitions']['Rack_Type_Media_Gateway']['defaultValue'])
 def cli_oxe_shelf_create(host, shelfid, racksize):
-    if host is None:
-        print('--host option is mandatory. Exiting ...')
-        exit(-1)
+    check_host_option(host)
     token = oxe_get_auth_from_cache(host)
     oxe_create_shelf(host, token, shelfid, racksize)
 
@@ -504,9 +464,7 @@ def cli_oxe_shelf_create(host, shelfid, racksize):
 @click.option('--shelfId', help='shelf id', default=None)
 @click.option('--mac', help='shelf MAC address', default=None)
 def cli_oxe_shelf_ethernet_parameters(host, shelfid, mac):
-    if host is None:
-        print('--host option is mandatory. Exiting ...')
-        exit(-1)
+    check_host_option(host)
     if shelfid is None:
         print('--shelfId option is mandatory. Exiting ...')
         exit(-1)
@@ -522,9 +480,7 @@ def cli_oxe_shelf_ethernet_parameters(host, shelfid, mac):
 @click.option('--shelfId', help='shelf id', default=10)
 @click.option('--compressors', help='number of compressors for IP devices', default=120)
 def cli_oxe_shelf_board_compressors_for_ip_devices(host, shelfid, compressors):
-    if host is None:
-        print('--host option is mandatory. Exiting ...')
-        exit(-1)
+    check_host_option(host)
     token = oxe_get_auth_from_cache(host)
     oxe_shelf_board_compressors_for_ip_devices(host, token, shelfid, compressors)
 
@@ -537,9 +493,7 @@ def cli_oxe_shelf_board_compressors_for_ip_devices(host, shelfid, compressors):
 @click.option('--rootPassword', help='root password', default='letacla1')
 @click.option('--callServer', help='main CallServer', default=None)
 def cli_oms_config(host, port, login, password, rootpassword, callserver):
-    if host is None:
-        print('--host option is mandatory. Exiting ...')
-        exit(-1)
+    check_host_option(host)
     if callserver is None:
         print('--callServer option is mandatory. Exiting ...')
         exit(-1)
@@ -552,9 +506,7 @@ def cli_oms_config(host, port, login, password, rootpassword, callserver):
 @click.option('--host', help='OXE IP address / FQDN', default=None)
 @click.option('--dpnss', help='DPNSS prefix number', default='A1000')
 def cli_oxe_translator_prefix_create_dpnss(host, dpnss):
-    if host is None:
-        print('--host option is mandatory. Exiting ...')
-        exit(-1)
+    check_host_option(host)
     token = oxe_get_auth_from_cache(host)
     oxe_translator_prefix_create_dpnss(host, token, dpnss)
 
@@ -572,9 +524,7 @@ def cli_oxe_translator_prefix_create_dpnss(host, dpnss):
 def cli_oxe_create_voice_mail(**kwargs):
     print('test on going on this feature\n')
     host = kwargs.get('host')
-    if host is None:
-        print('--host option is mandatory. Exiting ...')
-        exit(-1)
+    check_host_option(host)
     token = oxe_get_auth_from_cache(host)
     vm_number = kwargs.get('number')
     vm_accesses = kwargs.get('accesses')
@@ -591,9 +541,7 @@ def cli_oxe_create_voice_mail(**kwargs):
 @click.option('--host', help='OXE IP address / FQDN', default=None)
 def cli_oxe_delete_voice_mail(host):
     print('test on going on this feature\n')
-    if host is None:
-        print('--host option is mandatory. Exiting ...')
-        exit(-1)
+    check_host_option(host)
     token = oxe_get_auth_from_cache(host)
     vm_create(host, token, vm_number='')
 
@@ -608,9 +556,7 @@ def cli_oxe_delete_voice_mail(host):
 @click.option('--dns1', help='DNS1 IP address', default=None)
 @click.option('--dns2', help='DNS2 IP address', default='127.0.0.1')
 def cli_netadmin_dns(host, port, password, rootpassword, dns1, dns2):
-    if host is None:
-        print('--host option is mandatory. Exiting ...')
-        exit(-1)
+    check_host_option(host)
     if dns1 is None:
         print('--dns1 option is mandatory. Exiting ...')
         exit(-1)
@@ -627,9 +573,7 @@ def cli_netadmin_dns(host, port, password, rootpassword, dns1, dns2):
 @click.option('--proxyUser', help='Proxy login', default='')
 @click.option('--proxyPassword', help='Proxy port', default='')
 def cli_netadmin_proxy(host, port, password, rootpassword, proxyaddr, proxyport, proxyuser, proxypassword):
-    if host is None:
-        print('--host option is mandatory. Exiting ...')
-        exit(-1)
+    check_host_option(host)
     if proxyaddr is None:
         print('--proxyAddr option is mandatory. Exiting ...')
         exit(-1)
@@ -650,9 +594,7 @@ def cli_netadmin_proxy(host, port, password, rootpassword, proxyaddr, proxyport,
 @click.option('--port', help='OXE SSH port', default=22)
 @click.option('--password', help='mtcl password', default='mtcl')
 def cli_oxe_log_sh(host, port, password):
-    if host is None:
-        print('--host option is mandatory. Exiting ...')
-        exit(-1)
+    check_host_option(host)
     oxe_log_sh(host, port, password)
 
 
@@ -688,7 +630,5 @@ def cli_customize_sipp_uac_register_xml(filename, registrationtimer):
 @click.option('--key', help='key', default='01-tech-systems.key')
 @click.option('--bindIp', help='nginx bind ip', default='10.100.0.90')
 def cli_create_nginx_rp_config(host, domain, cert, key, bindip):
-    if host is None:
-        print('--host option is mandatory. Exiting ...')
-        exit(-1)
+    check_host_option(host)
     nginx_rp_oxe_config(host, domain, cert, key, bindip)

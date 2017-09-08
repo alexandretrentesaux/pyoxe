@@ -168,6 +168,33 @@ def oxe_purge_ccca_cfg(host, port, password):
     client.close()
 
 
+def oxe_purge_rainbowagent_logs(host, port=22, password='mtcl', root_password='letacla'):
+    client = paramiko.SSHClient()  # use the paramiko SSHClient
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # automatically add SSH key
+    try:
+        client.connect(host, port, username='mtcl', password=password)
+    except paramiko.AuthenticationException:
+        print('*** Failed to connect to {}:{}'.format(host, port))
+    channel = client.invoke_shell()
+    while channel.recv_ready() is False:
+        time.sleep(3)  # OXE is really slow on mtcl connexion
+    stdout = channel.recv(4096)
+    channel.send('su -\n')
+    while channel.recv_ready() is False:
+        time.sleep(0.5)
+    stdout += channel.recv(1024)
+    channel.send(root_password + '\n')
+    while channel.recv_ready() is False:
+        time.sleep(0.5)
+    stdout += channel.recv(1024)
+    channel.send('rm -f /var/log/rainbowagent.log.*\n')
+    while channel.recv_ready() is False:
+        time.sleep(0.5)
+    stdout += channel.recv(1024)
+    # print(stdout.decode(encoding='UTF-8'))
+    channel.close()
+    client.close()
+
 # todo enable phonebook use
 # todo disable phonebook use
 # todo clean rainbowagent log files
