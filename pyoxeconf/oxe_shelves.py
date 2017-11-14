@@ -1,4 +1,7 @@
-""" OXE Shelves configuration methods """
+# -*- encoding: utf-8 -*-
+
+"""OXE Shelves configuration methods 
+"""
 import pprint
 import requests
 import requests.packages
@@ -7,6 +10,17 @@ from pyoxeconf.oxe_access import oxe_set_headers
 
 # Create shelves
 def oxe_create_shelf(host, token, shelf_id, rack_size):
+    """Summary
+    
+    Args:
+        host (TYPE): Description
+        token (TYPE): Description
+        shelf_id (TYPE): Description
+        rack_size (TYPE): Description
+    
+    Returns:
+        TYPE: Description
+    """
     payload = {
         'MediaServer': 'Yes',
         'Rack_Size': rack_size
@@ -27,6 +41,17 @@ def oxe_create_shelf(host, token, shelf_id, rack_size):
 
 # Update shelf ethernet parameters
 def oxe_shelf_ethernet_parameters(host, token, shelf_id, mac_address):
+    """Summary
+    
+    Args:
+        host (TYPE): Description
+        token (TYPE): Description
+        shelf_id (TYPE): Description
+        mac_address (TYPE): Description
+    
+    Returns:
+        TYPE: Description
+    """
     payload = {
         'Board_Ethernet_Address': mac_address
     }
@@ -44,6 +69,17 @@ def oxe_shelf_ethernet_parameters(host, token, shelf_id, mac_address):
 
 # Update compressors number
 def oxe_shelf_board_compressors_for_ip_devices(host, token, shelf_id, compressors):
+    """Summary
+    
+    Args:
+        host (TYPE): Description
+        token (TYPE): Description
+        shelf_id (TYPE): Description
+        compressors (TYPE): Description
+    
+    Returns:
+        TYPE: Description
+    """
     payload = {
         'IP_Nb_Used_Compressors': compressors
     }

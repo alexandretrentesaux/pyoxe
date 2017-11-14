@@ -1,4 +1,10 @@
-"""SIPp methods for OXE"""
+# -*- encoding: utf-8 -*-
+
+"""SIPp methods for OXE
+
+Attributes:
+    register_template (TYPE): Description
+"""
 
 import os
 import tempfile
@@ -61,7 +67,7 @@ User-Agent: SIPp
 
 def sipp_csv_generator(file, pbx, range_start, range_size, sip_password):
     """Create CSV describing UAC for SIPp scripts
-
+    
     Args:
         file (str): destination file
         pbx (str): OXE IP address
@@ -77,11 +83,11 @@ def sipp_csv_generator(file, pbx, range_start, range_size, sip_password):
 
 def sipp_register_uac_xml_customize(file, registration_timer):
     """Customize registration script with custom registration timer
-
+    
     Args:
         file (str): destination file
         registration_timer (int): SIP REGISTER registration timer
-
+    
     """
     with open(os.join(tempfile.gettempdir(), file), 'w+') as fh:
         fh.write(register_template.format(registration_timer, registration_timer))

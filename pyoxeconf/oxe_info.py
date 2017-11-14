@@ -1,4 +1,7 @@
-""" OXE infos methods """
+# -*- encoding: utf-8 -*-
+
+"""OXE infos methods 
+"""
 import pprint
 import requests
 import requests.packages
@@ -8,11 +11,11 @@ from pyoxeconf.oxe_access import oxe_set_headers
 
 def oxe_get_json_model(host, token):
     """Summary
-
+    
     Args:
         host (TYPE): Description
         token (TYPE): Description
-
+    
     Returns:
         TYPE: Description
     """
@@ -32,12 +35,12 @@ def oxe_get_json_model(host, token):
 
 def oxe_get_rainbow_agent_version(host, port, password):
     """Summary
-
+    
     Args:
         host (TYPE): Description
         port (TYPE): Description
         password (TYPE): Description
-
+    
     Returns:
         TYPE: Description
     """
@@ -58,12 +61,12 @@ def oxe_get_rainbow_agent_version(host, port, password):
 
 def oxe_get_oxe_version(host, port, password):
     """Summary
-
+    
     Args:
         host (TYPE): Description
         port (TYPE): Description
         password (TYPE): Description
-
+    
     Returns:
         TYPE: Description
     """

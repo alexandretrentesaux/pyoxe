@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 """methods to finalize OMS configuration"""
 import pprint
 import paramiko

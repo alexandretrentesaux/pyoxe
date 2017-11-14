@@ -1,4 +1,7 @@
-""" OXE IP domains configuration methods """
+# -*- encoding: utf-8 -*-
+
+"""OXE IP domains configuration methods 
+"""
 import pprint
 import requests
 import requests.packages
@@ -6,6 +9,15 @@ from pyoxeconf.oxe_access import oxe_set_headers
 
 
 def oxe_ip_domain_deactivate_compression_default_ip_domain(host, token):
+    """Summary
+    
+    Args:
+        host (TYPE): Description
+        token (TYPE): Description
+    
+    Returns:
+        TYPE: Description
+    """
     payload = {
         'Intra_Domain_Coding_Algorithm': 'No_Compression',
         'Extra_Domain_Coding_Algorithm': 'No_Compression'

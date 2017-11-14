@@ -1,4 +1,7 @@
-"""OXE licensing methods"""
+# -*- encoding: utf-8 -*-
+
+"""OXE licensing methods
+"""
 import pprint
 import requests
 import requests.packages
@@ -7,13 +10,13 @@ from pyoxeconf.oxe_access import oxe_set_headers
 
 def oxe_set_flex(host, token, flex_ip_address, flex_port):
     """Summary
-
+    
     Args:
         host (TYPE): Description
         token (TYPE): Description
         flex_ip_address (TYPE): Description
         flex_port (TYPE): Description
-
+    
     Returns:
         TYPE: Description
     """
@@ -36,5 +39,11 @@ def oxe_set_flex(host, token, flex_ip_address, flex_port):
 
 
 def oxe_create_offerid(host, password):
+    """Summary
+    
+    Args:
+        host (TYPE): Description
+        password (TYPE): Description
+    """
     pprint.pprint('todo\n')
     # todo: connect CS through SSH and create empty file /usr3/mao/offerid.zip

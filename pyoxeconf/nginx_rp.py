@@ -1,3 +1,10 @@
+# -*- encoding: utf-8 -*-
+
+"""Summary
+
+Attributes:
+    rp_template (str): Description
+"""
 import os
 import tempfile
 
@@ -33,7 +40,7 @@ rp_template = """server {{
 
 def nginx_rp_oxe_config(host, domain, cert, key, bind_ip):
     """Create NGINX RP config file for accessing OXE WBM
-
+    
     Args:
         host (str): OXE FQDN host part
         domain (str): OXE domain part

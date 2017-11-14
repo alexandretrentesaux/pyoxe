@@ -1,4 +1,7 @@
-""" OXE connection methods """
+# -*- encoding: utf-8 -*-
+
+"""OXE connection methods 
+"""
 import paramiko
 import time
 import re
@@ -6,6 +9,15 @@ import pprint
 
 
 def oxe_netdata_update(host, data, port=22, password='mtcl', root_password='letacla'):
+    """Summary
+    
+    Args:
+        host (TYPE): Description
+        data (TYPE): Description
+        port (int, optional): Description
+        password (str, optional): Description
+        root_password (str, optional): Description
+    """
     client = paramiko.SSHClient()  # use the paramiko SSHClient
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # automatically add SSH key
     try:
@@ -42,6 +54,17 @@ def oxe_netdata_update(host, data, port=22, password='mtcl', root_password='leta
 
 
 def oxe_netdata_get(host, pattern, port=22, password='mtcl'):
+    """Summary
+    
+    Args:
+        host (TYPE): Description
+        pattern (TYPE): Description
+        port (int, optional): Description
+        password (str, optional): Description
+    
+    Returns:
+        TYPE: Description
+    """
     client = paramiko.SSHClient()  # use the paramiko SSHClient
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # automatically add SSH key
     try:

@@ -1,4 +1,7 @@
-"""Summary"""
+# -*- encoding: utf-8 -*-
+
+"""Summary
+"""
 import paramiko
 import time
 import re
@@ -7,15 +10,12 @@ import pprint
 
 def oxe_reboot(host, port, password, swinst_password):
     """Reboot OXE Call Server
-
+    
     Args:
         host (TYPE): Description
         port (TYPE): Description
         password (TYPE): Description
         swinst_password (TYPE): Description
-
-    Returns:
-        TYPE: Description
     """
     # connect OXE through SSH and execute 'rainbowagent -v'
     client = paramiko.SSHClient()  # use the paramiko SSHClient
@@ -43,15 +43,12 @@ def oxe_reboot(host, port, password, swinst_password):
 
 def oxe_kill_rainbow_agent(host, port, password, root_password):
     """Kill rainbow agent
-
+    
     Args:
         host (TYPE): Description
         port (TYPE): Description
         password (TYPE): Description
         root_password (TYPE): Description
-
-    Returns:
-        TYPE: Description
     """
     # connect OXE through SSH and execute 'rainbowagent -v'
     client = paramiko.SSHClient()  # use the paramiko SSHClient
@@ -83,15 +80,11 @@ def oxe_kill_rainbow_agent(host, port, password, root_password):
 
 def oxe_runmao(host, port, password):
     """RUNMAO to provision configuration without starting telephone
-
+    
     Args:
         host (TYPE): Description
         port (TYPE): Description
         password (TYPE): Description
-        root_password (TYPE): Description
-
-    Returns:
-        TYPE: Description
     """
     client = paramiko.SSHClient()  # use the paramiko SSHClient
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # automatically add SSH key
@@ -105,15 +98,11 @@ def oxe_runmao(host, port, password):
 
 def oxe_runtel(host, port, password):
     """RUNTEL start telephone
-
+    
     Args:
         host (TYPE): Description
         port (TYPE): Description
         password (TYPE): Description
-        root_password (TYPE): Description
-
-    Returns:
-        TYPE: Description
     """
     client = paramiko.SSHClient()  # use the paramiko SSHClient
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # automatically add SSH key

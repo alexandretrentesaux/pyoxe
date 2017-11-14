@@ -1,4 +1,7 @@
-""" OXE SIP configuration methods """
+# -*- encoding: utf-8 -*-
+
+"""OXE SIP configuration methods 
+"""
 import pprint
 import requests
 import requests.packages
@@ -7,6 +10,16 @@ from pyoxeconf.oxe_access import oxe_set_headers
 
 # create default trunk groups
 def oxe_sip_create_default_trunk_groups(host, token, trunk_id):
+    """Summary
+    
+    Args:
+        host (TYPE): Description
+        token (TYPE): Description
+        trunk_id (TYPE): Description
+    
+    Returns:
+        TYPE: Description
+    """
     payload = {
         'Homo_Net_For_Direct_RTP': 'Yes',
         'Number_Of_Digits_To_Send': '4',
@@ -29,6 +42,16 @@ def oxe_sip_create_default_trunk_groups(host, token, trunk_id):
 
 # configure sip gateway
 def oxe_sip_gateway(host, token, trunk_id):
+    """Summary
+    
+    Args:
+        host (TYPE): Description
+        token (TYPE): Description
+        trunk_id (TYPE): Description
+    
+    Returns:
+        TYPE: Description
+    """
     payload = {
         'SIP_Subnetwork': '15',
         'SIP_Trunk_Group': trunk_id
@@ -46,6 +69,15 @@ def oxe_sip_gateway(host, token, trunk_id):
 
 # configure sip proxy
 def oxe_sip_proxy(host, token):
+    """Summary
+    
+    Args:
+        host (TYPE): Description
+        token (TYPE): Description
+    
+    Returns:
+        TYPE: Description
+    """
     payload = {
         'SIP_min_auth_method': 'SIP_None',
         'SIP_Move_To_TCP': 'false',

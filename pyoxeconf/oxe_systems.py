@@ -1,4 +1,7 @@
-""" OXE Systems configuration methods """
+# -*- encoding: utf-8 -*-
+
+"""OXE Systems configuration methods 
+"""
 import pprint
 import requests
 import requests.packages
@@ -7,6 +10,16 @@ from pyoxeconf.oxe_access import oxe_set_headers
 
 # Compression_type value 'G_729'/'G_723'
 def oxe_system_compression_type(host, token, compression_type):
+    """Summary
+    
+    Args:
+        host (TYPE): Description
+        token (TYPE): Description
+        compression_type (TYPE): Description
+    
+    Returns:
+        TYPE: Description
+    """
     payload = {
         'Compression_Type': compression_type
     }
@@ -25,6 +38,16 @@ def oxe_system_compression_type(host, token, compression_type):
 
 # law value "Law_A"/"Law_Mu"
 def oxe_system_law(host, token, law):
+    """Summary
+    
+    Args:
+        host (TYPE): Description
+        token (TYPE): Description
+        law (TYPE): Description
+    
+    Returns:
+        TYPE: Description
+    """
     payload = {
         'Law': law
     }
@@ -43,6 +66,16 @@ def oxe_system_law(host, token, law):
 
 # mode value 'true'/'false'
 def oxe_system_alaw_to_mulaw(host, token, mode):
+    """Summary
+    
+    Args:
+        host (TYPE): Description
+        token (TYPE): Description
+        mode (TYPE): Description
+    
+    Returns:
+        TYPE: Description
+    """
     payload = {
         'T0_Mu_Law': mode
     }
@@ -60,6 +93,16 @@ def oxe_system_alaw_to_mulaw(host, token, mode):
 
 
 def oxe_system_accept_mu_a_laws_in_sip(host, token, mode):
+    """Summary
+    
+    Args:
+        host (TYPE): Description
+        token (TYPE): Description
+        mode (TYPE): Description
+    
+    Returns:
+        TYPE: Description
+    """
     payload = {
         'T0_Mu_Law': mode
     }
@@ -77,6 +120,16 @@ def oxe_system_accept_mu_a_laws_in_sip(host, token, mode):
 
 
 def oxe_system_ucaas_csta_sessions_monitored(host, token, max_session):
+    """Summary
+    
+    Args:
+        host (TYPE): Description
+        token (TYPE): Description
+        max_session (TYPE): Description
+    
+    Returns:
+        TYPE: Description
+    """
     payload = {
         'CSTA_Requests_monitored': max_session
     }
@@ -94,6 +147,16 @@ def oxe_system_ucaas_csta_sessions_monitored(host, token, max_session):
 
 
 def oxe_system_network_number(host, token, net_number):
+    """Summary
+    
+    Args:
+        host (TYPE): Description
+        token (TYPE): Description
+        net_number (TYPE): Description
+    
+    Returns:
+        TYPE: Description
+    """
     payload = {
         'Network_Number': net_number
     }
@@ -110,6 +173,16 @@ def oxe_system_network_number(host, token, net_number):
 
 
 def oxe_system_node_number(host, token, node_number):
+    """Summary
+    
+    Args:
+        host (TYPE): Description
+        token (TYPE): Description
+        node_number (TYPE): Description
+    
+    Returns:
+        TYPE: Description
+    """
     payload = {
         'Node_Number': node_number
     }

@@ -1,4 +1,7 @@
-"""Summary"""
+# -*- encoding: utf-8 -*-
+
+"""Summary
+"""
 import requests
 import requests.packages
 import time
@@ -8,7 +11,7 @@ from pyoxeconf.oxe_access import oxe_set_headers
 
 def oxe_create_user(host, token, extension, last_name, first_name, station_type, max_retries):
     """Summary
-
+    
     Args:
         host (TYPE): Description
         token (TYPE): Description
@@ -44,7 +47,7 @@ def oxe_create_user(host, token, extension, last_name, first_name, station_type,
 
 def oxe_delete_user(host, token, extension, max_retries):
     """Summary
-
+    
     Args:
         host (TYPE): Description
         token (TYPE): Description
@@ -66,7 +69,7 @@ def oxe_delete_user(host, token, extension, max_retries):
 
 def oxe_create_phonebook_entry(host, token, extension, last_name, first_name, alias, max_retries):
     """Summary
-
+    
     Args:
         host (TYPE): Description
         token (TYPE): Description

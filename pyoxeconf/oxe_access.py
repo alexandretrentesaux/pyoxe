@@ -1,4 +1,7 @@
-""" OXE connection methods """
+# -*- encoding: utf-8 -*-
+
+"""OXE connection methods 
+"""
 import configparser
 import pprint
 import requests
@@ -14,7 +17,7 @@ import tempfile
 # create connection config file
 def oxe_configure(host, login, password, proxies):
     """Create config file with OXE connection parameters
-
+    
     Args:
         host (str): OXE IP or FQDN
         login (str): mtcl user
@@ -54,9 +57,12 @@ def oxe_configure(host, login, password, proxies):
 # get connection info from config file
 def oxe_get_config(host=None):
     """Summary
-
+    
     Returns:
         TYPE: Description
+    
+    Args:
+        host (None, optional): Description
     """
 
     config = configparser.ConfigParser()
@@ -84,9 +90,12 @@ def oxe_get_config(host=None):
 # store authentication token
 def oxe_get_auth_from_cache(host):
     """Summary
-
+    
     Returns:
         TYPE: Description
+    
+    Args:
+        host (TYPE): Description
     """
     config = configparser.ConfigParser()
     full_path = os.path.join(tempfile.gettempdir(), '.pyoxeconf')
@@ -103,11 +112,11 @@ def oxe_get_auth_from_cache(host):
 # build header
 def oxe_set_headers(token, method=None):
     """Builder for requests headers depending on request method
-
+    
     Args:
         token (STR): Authentication token
         method (None, optional): GET (not mandatory), PUT, POST, DELETE
-
+    
     Returns:
         JSON: headers
     """
@@ -130,14 +139,14 @@ def oxe_set_headers(token, method=None):
 # OXE WBM authentication + JWT cache creation
 def oxe_authenticate(host, login, password, proxies=None):
     """Summary
-
+    
     Args:
-        host (str): OXE IP or FQDN
-        login (str): mtcl user
-        password (str): mtcl password
-        proxies (json): proxies
-
-    Returns:sed -i -e 's/zone=two\:1m rate\=2r\/s/zone=two\:1m rate\=50r\/s/g' /usr/local/openresty/nginx/conf/wbm.conf
+        host (TYPE): Description
+        login (TYPE): Description
+        password (TYPE): Description
+        proxies (None, optional): Description
+    
+    Returns:
         TYPE: Description
     """
 
@@ -175,6 +184,11 @@ def oxe_authenticate(host, login, password, proxies=None):
 
 # OXE WBM logout
 def oxe_logout(host):
+    """Summary
+    
+    Args:
+        host (TYPE): Description
+    """
     config = configparser.ConfigParser()
     full_path = os.path.join(tempfile.gettempdir(), '.pyoxeconf')
 
@@ -189,6 +203,12 @@ def oxe_logout(host):
 
 
 def auth_write_cache(path, config):
+    """Summary
+    
+    Args:
+        path (TYPE): Description
+        config (TYPE): Description
+    """
     with open(path, 'w+') as file:
         try:
             config.write(file)
@@ -200,7 +220,8 @@ def auth_write_cache(path, config):
 
 # All OXE WBM logout
 def oxe_logout_all():
-    """Logout from WBM"""
+    """Logout from WBM
+    """
 
     # clear cache
     try:
@@ -212,15 +233,13 @@ def oxe_logout_all():
 # OXE WBM change requests quota
 def oxe_wbm_update_requests_quota(host, port, password, root_password, new_limit=50):
     """Update WBM requests limit for configuration zone (not authentication zone)
-
+    
     Args:
         host (STR): OmniPCX Enterprise IP address
         port (INT): SSH port
         password (STR): mtcl password
         root_password (TYPE): root password
-
-    Returns:
-        TYPE: Description
+        new_limit (int, optional): Description
     """
 
     # Build OXE sed command
@@ -257,7 +276,7 @@ def oxe_wbm_update_requests_quota(host, port, password, root_password, new_limit
 
 def oxe_wbm_restart(host, port, password):
     """restart WBM
-
+    
     Args:
         host (STR): OmniPCX Enterprise IP address
         port (INT): SSH port

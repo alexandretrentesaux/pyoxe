@@ -1,4 +1,7 @@
-""" OXE 4645 configuration methods """
+# -*- encoding: utf-8 -*-
+
+"""OXE 4645 configuration methods 
+"""
 import paramiko
 import time
 import requests
@@ -10,6 +13,14 @@ from pyoxeconf.oxe_access import oxe_set_headers
 # todo: add callserver2 option
 # todo: add option for eva_access
 def vm_create_eva_cfg(host, port=22, password='mtcl', accesses=15):
+    """Summary
+    
+    Args:
+        host (TYPE): Description
+        port (int, optional): Description
+        password (str, optional): Description
+        accesses (int, optional): Description
+    """
     data = 'callserver1=' + host +'\ncallserver2=' + '\neva=' + host + '\eva_access=' + accesses
     client = paramiko.SSHClient()  # use the paramiko SSHClient
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # automatically add SSH key
@@ -32,6 +43,14 @@ def vm_create_eva_cfg(host, port=22, password='mtcl', accesses=15):
 
 # todo : add option to customize nb_lines
 def vm_create_eva_access(host, port=22, password='mtcl', accesses=15):
+    """Summary
+    
+    Args:
+        host (TYPE): Description
+        port (int, optional): Description
+        password (str, optional): Description
+        accesses (int, optional): Description
+    """
     data = 'NB_LINES=' + accesses
     client = paramiko.SSHClient()  # use the paramiko SSHClient
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # automatically add SSH key
@@ -54,6 +73,20 @@ def vm_create_eva_access(host, port=22, password='mtcl', accesses=15):
 
 def vm_create(host, token, voice_mail_number, number_accesses, voice_mail_directory_name='voicemail',
                                  voice_mail_server_index=1, voice_mail_type='embedded'):
+    """Summary
+    
+    Args:
+        host (TYPE): Description
+        token (TYPE): Description
+        voice_mail_number (TYPE): Description
+        number_accesses (TYPE): Description
+        voice_mail_directory_name (str, optional): Description
+        voice_mail_server_index (int, optional): Description
+        voice_mail_type (str, optional): Description
+    
+    Returns:
+        TYPE: Description
+    """
     payload = {
         'Directory_Name': voice_mail_directory_name,
         'Number_Of_Accesses': number_accesses,

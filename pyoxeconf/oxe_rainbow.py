@@ -1,4 +1,7 @@
-"""Rainbow settings methods"""
+# -*- encoding: utf-8 -*-
+
+"""Rainbow settings methods
+"""
 import configparser
 import pprint
 import requests
@@ -11,9 +14,12 @@ from pyoxeconf.oxe_access import oxe_set_headers
 
 def oxe_get_rainbow_config(filename=None):
     """Retrieve Rainbow configuration from ini file
-
+    
     Args:
         filename (STR): config file name
+    
+    Returns:
+        TYPE: Description
     """
 
     config = configparser.ConfigParser()
@@ -43,9 +49,9 @@ def oxe_get_rainbow_config(filename=None):
 
 def oxe_rainbow_connect(host, token, rainbow_domain, pbx_id, temp_password, phone_book):
     """Set settings for Rainbow connection.
-
+    
     Not sufficient for AIO: updateCccaCfg must used in addition to this command
-
+    
     Args:
         host (STR): OmniPCX Enterprise IP address / FQDN
         token (STR): Authentication token
@@ -53,7 +59,7 @@ def oxe_rainbow_connect(host, token, rainbow_domain, pbx_id, temp_password, phon
         pbx_id (STR): PBX ID
         temp_password (STR): Activation code
         phone_book (STR): YES/NO Phone book processing
-
+    
     Returns:
         INT: API request status code
     """
@@ -80,11 +86,11 @@ def oxe_rainbow_connect(host, token, rainbow_domain, pbx_id, temp_password, phon
 
 def oxe_rainbow_disconnect(host, token):
     """Disconnect OXE from Rainbow
-
+    
     Args:
         host (STR): OmniPCX Enterprise IP address / FQDN
         token (STR): Authentication token
-
+    
     Returns:
         INT: API request status code
     """
@@ -103,13 +109,13 @@ def oxe_rainbow_disconnect(host, token):
 
 def oxe_rainbow_reconnect(host, token, pbx_id, rainbow_domain):
     """Reconnect OXE to rainbow
-
+    
     Args:
         host (TYPE): Description
         token (TYPE): Description
         pbx_id (TYPE): Description
         rainbow_domain (TYPE): Description
-
+    
     Returns:
         TYPE: Description
     """
@@ -132,7 +138,7 @@ def oxe_rainbow_reconnect(host, token, pbx_id, rainbow_domain):
 
 def oxe_update_ccca_cfg_dev_all_in_one(host, port, password, api_server):
     """Summary
-
+    
     Args:
         host (TYPE): Description
         port (TYPE): Description
@@ -153,6 +159,13 @@ def oxe_update_ccca_cfg_dev_all_in_one(host, port, password, api_server):
 
 
 def oxe_purge_ccca_cfg(host, port, password):
+    """Summary
+    
+    Args:
+        host (TYPE): Description
+        port (TYPE): Description
+        password (TYPE): Description
+    """
     # sed -re 's/PASSWORD=.*/PASSWORD=/g' /usr3/mao/ccca.cfg
     # sed -re 's/STATE=./STATE=0/g' /usr3/mao/ccca.cfg
     # sed '/^RAINBOW_HOST/d' /usr3/mao/ccca.cfg
@@ -169,6 +182,14 @@ def oxe_purge_ccca_cfg(host, port, password):
 
 
 def oxe_purge_rainbowagent_logs(host, port=22, password='mtcl', root_password='letacla'):
+    """Summary
+    
+    Args:
+        host (TYPE): Description
+        port (int, optional): Description
+        password (str, optional): Description
+        root_password (str, optional): Description
+    """
     client = paramiko.SSHClient()  # use the paramiko SSHClient
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # automatically add SSH key
     try:

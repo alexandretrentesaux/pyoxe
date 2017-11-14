@@ -1,4 +1,8 @@
-oxe_model = {
+# -*- encoding: utf-8 -*-
+
+"""Describing OXE data model
+"""
+  oxe_model = {
   'Node': {
     'create': 'false',
     'delete': 'false',
