@@ -80,6 +80,7 @@ def oxe_get_oxe_version(host, port, password):
     command = 'siteid'
     stdin, stdout, stderr = client.exec_command(command)
     tmp = stdout.readlines()
+
     # pprint.pprint(tmp)
     # todo test string patch static/dynamic
     major = tmp[2].split()[4].upper()
