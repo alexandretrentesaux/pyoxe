@@ -19,7 +19,7 @@ import pkg_resources
 from clickclick import AliasedGroup
 from pyoxeconf.__init__ import __version__
 from pyoxeconf.oxe_commands import *
-from pyoxeconf.oxe_access import oxe_get_auth_from_cache, oxe_logout, oxe_configure, oxe_get_config, \
+from pyoxeconf.oxe_access import oxe_get_auth_from_cache, oxe_logout, oxe_logout_all, oxe_configure, oxe_get_config, \
     oxe_authenticate, oxe_wbm_update_requests_quota, oxe_wbm_restart
 from pyoxeconf.oxe_info import *
 from pyoxeconf.oxe_users import *
@@ -153,7 +153,10 @@ def cli_oxe_access_logout(host):
     Args:
         host (TYPE): Description
     """
-    oxe_logout(host)
+    if host is not None:
+        oxe_logout(host)
+    else:
+        oxe_logout_all()
 
 
 @cli.command('wbmRequestsLimit')
