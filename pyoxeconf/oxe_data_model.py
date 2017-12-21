@@ -2,7 +2,7 @@
 
 """Describing OXE data model
 """
-  oxe_model = {
+oxe_model = {
   'Node': {
     'create': 'false',
     'delete': 'false',
