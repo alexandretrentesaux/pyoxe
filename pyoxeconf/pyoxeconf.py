@@ -140,7 +140,7 @@ def cli_oxe_access_connect(host, password, proxies, ini):
         ini (TYPE): Description
     """
     check_host_option(host)
-    if ini is not None:
+    if ini is True:
         password, proxies = oxe_get_config(str(host))
     oxe_authenticate(host, 'mtcl', password, proxies)
 
