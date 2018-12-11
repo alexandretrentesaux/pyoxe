@@ -3,7 +3,7 @@
 """pilot2a methods
 """
 
-import pprint
+from pprint import pprint
 
 
 def pilot2a_init(host, port=22, password='mtcl'):
@@ -14,4 +14,4 @@ def pilot2a_init(host, port=22, password='mtcl'):
         port (int, optional): Description
         password (str, optional): Description
     """
-    pprint.pprint('todo')
+    pprint('todo')

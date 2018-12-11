@@ -2,10 +2,10 @@
 
 """OXE 4645 configuration methods 
 """
-import paramiko
-import time
-import requests
-import pprint
+from paramiko import SSHClient, AutoAddPolicy, AuthenticationException
+from time import sleep
+from requests import packages, exceptions, post, put
+from pprint import pprint
 from pyoxeconf.oxe_access import oxe_set_headers
 
 
@@ -22,19 +22,19 @@ def vm_create_eva_cfg(host, port=22, password='mtcl', accesses=15):
         accesses (int, optional): Description
     """
     data = 'callserver1=' + host +'\ncallserver2=' + '\neva=' + host + '\eva_access=' + accesses
-    client = paramiko.SSHClient()  # use the paramiko SSHClient
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # automatically add SSH key
+    client = SSHClient()  # use the paramiko SSHClient
+    client.set_missing_host_key_policy(AutoAddPolicy())  # automatically add SSH key
     try:
         client.connect(host, port, username='mtcl', password=password)
-    except paramiko.AuthenticationException:
+    except AuthenticationException:
         print('*** Failed to connect to {}:{}'.format(host, port))
     channel = client.invoke_shell()
     while channel.recv_ready() is False:
-        time.sleep(3)  # OXE is really slow on mtcl connexion
+        sleep(3)  # OXE is really slow on mtcl connexion
     stdout = channel.recv(4096)
     channel.send('cat >> /usr3/mao/eva.cfg << EOF\n' + data + '\nEOF\n')
     while channel.recv_ready() is False:
-        time.sleep(0.5)
+        sleep(0.5)
     stdout += channel.recv(1024)
     # print(stdout.decode(encoding='UTF-8'))
     channel.close()
@@ -52,19 +52,19 @@ def vm_create_eva_access(host, port=22, password='mtcl', accesses=15):
         accesses (int, optional): Description
     """
     data = 'NB_LINES=' + accesses
-    client = paramiko.SSHClient()  # use the paramiko SSHClient
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # automatically add SSH key
+    client = SSHClient()  # use the paramiko SSHClient
+    client.set_missing_host_key_policy(AutoAddPolicy())  # automatically add SSH key
     try:
         client.connect(host, port, username='mtcl', password=password)
-    except paramiko.AuthenticationException:
+    except AuthenticationException:
         print('*** Failed to connect to {}:{}'.format(host, port))
     channel = client.invoke_shell()
     while channel.recv_ready() is False:
-        time.sleep(3)  # OXE is really slow on mtcl connexion
+        sleep(3)  # OXE is really slow on mtcl connexion
     stdout = channel.recv(4096)
     channel.send('cat >> /usr3/mao/eva.access << EOF\n' + data + '\nEOF\n')
     while channel.recv_ready() is False:
-        time.sleep(0.5)
+        sleep(0.5)
     stdout += channel.recv(1024)
     # print(stdout.decode(encoding='UTF-8'))
     channel.close()
@@ -95,14 +95,14 @@ def vm_create(host, token, voice_mail_number, number_accesses, voice_mail_direct
         'Voice_Mail_Server_Number': voice_mail_server_index,
         'Voice_Mail_Type': voice_mail_type
     }
-    requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
+    packages.urllib3.disable_warnings(packages.urllib3.exceptions.InsecureRequestWarning)
     try:
-        modification = requests.put(
+        modification = put(
             'https://' + host + '/api/mgt/1.0/Node/101/Application_Configuration/1/Voice_Mail/' + voice_mail_server_index,
             json=payload,
             headers=oxe_set_headers(token, 'PUT'),
             verify=False
             )
-    except requests.exceptions.RequestException as e:
-        pprint.pprint(e)
+    except exceptions.RequestException as e:
+        pprint(e)
     return modification.status_code

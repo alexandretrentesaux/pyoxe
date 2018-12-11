@@ -13,31 +13,38 @@ Attributes:
 
 import click
 import progressbar
-import datetime
-import json
-import pkg_resources
+from _datetime import datetime
+from json import loads, dumps
+from pkg_resources import require
+from pprint import pprint
+from sys import exit
+from os.path import exists, join
+from tempfile import gettempdir
 from clickclick import AliasedGroup
 from pyoxeconf.__init__ import __version__
 from pyoxeconf.oxe_commands import *
 from pyoxeconf.oxe_access import oxe_get_auth_from_cache, oxe_logout, oxe_logout_all, oxe_configure, oxe_get_config, \
     oxe_authenticate, oxe_wbm_update_requests_quota, oxe_wbm_restart
-from pyoxeconf.oxe_info import *
-from pyoxeconf.oxe_users import *
-from pyoxeconf.oxe_rainbow import *
-from pyoxeconf.oxe_licensing import *
-from pyoxeconf.oxe_sip import *
-from pyoxeconf.oxe_shelves import *
-from pyoxeconf.oxe_systems import *
-from pyoxeconf.oxe_ip_domains import *
-from pyoxeconf.oxe_translator import *
-from pyoxeconf.oxe_voicemail import *
-from pyoxeconf.oxe_netadmin import *
-# from pyoxeconf.oxe_swinst import *
-from pyoxeconf.oms_config import *
-from pyoxeconf.sipp import *
-from pyoxeconf.oxe_log import *
-from pyoxeconf.nginx_rp import *
-from pyoxeconf.oxe_data_model import oxe_model
+from pyoxeconf.oxe_info import oxe_get_json_model, oxe_get_oxe_version, oxe_get_rainbow_agent_version
+from pyoxeconf.oxe_users import oxe_create_phonebook_entry, oxe_create_user, oxe_delete_user
+from pyoxeconf.oxe_rainbow import oxe_get_rainbow_config, oxe_purge_ccca_cfg, oxe_purge_rainbowagent_logs, \
+    oxe_rainbow_connect, oxe_rainbow_disconnect, oxe_rainbow_reconnect, oxe_update_ccca_cfg_dev_all_in_one
+from pyoxeconf.oxe_licensing import oxe_set_flex
+from pyoxeconf.oxe_sip import oxe_sip_create_default_trunk_groups, oxe_sip_gateway, oxe_sip_proxy
+from pyoxeconf.oxe_shelves import oxe_create_shelf, oxe_shelf_board_compressors_for_ip_devices, \
+    oxe_shelf_ethernet_parameters
+from pyoxeconf.oxe_systems import oxe_system_accept_mu_a_laws_in_sip, oxe_system_alaw_to_mulaw, \
+    oxe_system_compression_type, oxe_system_law, oxe_system_network_number, oxe_system_node_number, \
+    oxe_system_ucaas_csta_sessions_monitored
+from pyoxeconf.oxe_ip_domains import oxe_ip_domain_deactivate_compression_default_ip_domain
+from pyoxeconf.oxe_translator import oxe_translator_prefix_create_dpnss
+from pyoxeconf.oxe_netadmin import oxe_netdata_get, oxe_netdata_update
+from pyoxeconf.oms_config import oms_omsconfig
+from pyoxeconf.sipp import sipp_csv_generator, sipp_register_uac_xml_customize
+from pyoxeconf.oxe_log import oxe_log_sh
+from pyoxeconf.nginx_rp import nginx_rp_oxe_config
+from pyoxeconf.oxe_data_model import oxe_data_model
+from pyoxeconf.oxe_voicemail import vm_create, vm_create_eva_access, vm_create_eva_cfg
 
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
@@ -76,7 +83,7 @@ def print_version(ctx, param, value):
     """
     if not value or ctx.resilient_parsing:
         return
-    pprint.pprint(pkg_resources.require("pyoxeconf")[0])
+    pprint(require("pyoxeconf")[0])
     click.echo('pyoxeconf_cli version: {}'.format(__version__))
     ctx.exit()
 
@@ -205,10 +212,10 @@ def cli_get_json_model(host):
     """
     check_host_option(host)
     token = oxe_get_auth_from_cache(str(host))
-    json_model = json.loads(oxe_get_json_model(host, token))
-    timestamp = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-    with open(os.path.join(tempfile.gettempdir(), 'OXE_' + host + '_' + timestamp + '.json'), 'w') as fh:
-        fh.write(json.dumps(json_model, indent=2, sort_keys=True))
+    json_model = loads(oxe_get_json_model(host, token))
+    timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+    with open(join(gettempdir(), 'OXE_' + host + '_' + timestamp + '.json'), 'w') as fh:
+        fh.write(dumps(json_model, indent=2, sort_keys=True))
 
 
 # Users management
@@ -219,7 +226,7 @@ def cli_get_json_model(host):
 @click.option('--rangeStart', help='first internal number', default=8000)
 @click.option('--setType',
               help='set type',
-              type=click.Choice(oxe_model['definitions']['Station_Type']['values']),
+              type=click.Choice(oxe_data_model()['definitions']['Station_Type']['values']),
               default='SIP_Extension')
 @click.option('--companyId', help='Company Index', default=1)
 @click.option('--sipp', help='Generate SIPp csv file', is_flag=True)
@@ -446,8 +453,8 @@ def cli_oxe_rainbow_purge_ccca_cfg(host, port, password):
 @click.option('--host', help='OXE IP address', default=None)
 @click.option('--port', help='OXE SSH port', default=22)
 @click.option('--password', help='mtcl password', default='mtcl')
-@click.option('--rootPassword', help='swinst password', default='letacla')
-def cli_purge_rainbowagent_logs(host, port, password):
+@click.option('--rootPassword', help='root password', default='letacla')
+def cli_purge_rainbowagent_logs(host, port, password, rootpassword):
     """Summary
     
     Args:
@@ -456,7 +463,7 @@ def cli_purge_rainbowagent_logs(host, port, password):
         password (TYPE): Description
     """
     check_host_option(host)
-    oxe_purge_rainbowagent_logs(host, port, password, root_password)
+    oxe_purge_rainbowagent_logs(host, port, password, rootpassword)
 
 
 # OXE information
@@ -608,7 +615,7 @@ def cli_enable_ucaas_csta_sessions_monitored(host, sessions):
 @click.option('--host', help='OXE IP address / FQDN', default=None)
 @click.option('--law',
               help='System law',
-              type=click.Choice(oxe_model['definitions']['Law_MG']['values']),
+              type=click.Choice(oxe_data_model()['definitions']['Law_MG']['values']),
               default='Law_A')
 def cli_system_law(host, law):
     """Summary
@@ -626,7 +633,7 @@ def cli_system_law(host, law):
 @click.option('--host', help='OXE IP address / FQDN', default=None)
 @click.option('--compression',
               help='System compression',
-              type=click.Choice(oxe_model['Node']['subClasses']['System_Parameters']['subClasses']
+              type=click.Choice(oxe_data_model()['Node']['subClasses']['System_Parameters']['subClasses']
                                 ['System_Parameters_2']['subClasses']['Compression_Parameters']['attributes']
                                 ['Compression_Type']['type']['values']),
               default='G_729')
@@ -684,8 +691,8 @@ def cli_report_node_number(host, port, password):
 @click.option('--host', help='OXE IP address / FQDN', default=None)
 @click.option('--shelfId', help='shelf id', default=10)
 @click.option('--rackSize', help='shelf rack size',
-              type=click.Choice(oxe_model['definitions']['Rack_Type_Media_Gateway']['values']),
-              default=oxe_model['definitions']['Rack_Type_Media_Gateway']['defaultValue'])
+              type=click.Choice(oxe_data_model()['definitions']['Rack_Type_Media_Gateway']['values']),
+              default=oxe_data_model()['definitions']['Rack_Type_Media_Gateway']['defaultValue'])
 def cli_oxe_shelf_create(host, shelfid, racksize):
     """Summary
     

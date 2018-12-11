@@ -2,9 +2,8 @@
 
 """OXE SIP configuration methods 
 """
-import pprint
-import requests
-import requests.packages
+from pprint import pprint
+from requests import packages, exceptions, post, put
 from pyoxeconf.oxe_access import oxe_set_headers
 
 
@@ -29,14 +28,14 @@ def oxe_sip_create_default_trunk_groups(host, token, trunk_id):
         'T2_Specificity': 'SIP',
         'Trunk_Group_Name': 'SIP'
     }
-    requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
+    packages.urllib3.disable_warnings(packages.urllib3.exceptions.InsecureRequestWarning)
     try:
-        creation = requests.post('https://' + host + '/api/mgt/1.0/Node/1/Trunk_Group_Overview/' + str(trunk_id),
-                                 json=payload,
-                                 headers=oxe_set_headers(token, 'POST'),
-                                 verify=False)
-    except requests.exceptions.RequestException as e:
-        pprint.pprint(e)
+        creation = post('https://' + host + '/api/mgt/1.0/Node/1/Trunk_Group_Overview/' + str(trunk_id),
+                        json=payload,
+                        headers=oxe_set_headers(token, 'POST'),
+                        verify=False)
+    except exceptions.RequestException as e:
+        pprint(e)
     return creation.status_code
 
 
@@ -56,14 +55,14 @@ def oxe_sip_gateway(host, token, trunk_id):
         'SIP_Subnetwork': '15',
         'SIP_Trunk_Group': trunk_id
     }
-    requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
+    packages.urllib3.disable_warnings(packages.urllib3.exceptions.InsecureRequestWarning)
     try:
-        modification = requests.put('https://' + host + '/api/mgt/1.0/Node/1/SIP/1/SIP_Gateway/1',
-                                    json=payload,
-                                    headers=oxe_set_headers(token, 'PUT'),
-                                    verify=False)
-    except requests.exceptions.RequestException as e:
-        pprint.pprint(e)
+        modification = put('https://' + host + '/api/mgt/1.0/Node/1/SIP/1/SIP_Gateway/1',
+                           json=payload,
+                           headers=oxe_set_headers(token, 'PUT'),
+                           verify=False)
+    except exceptions.RequestException as e:
+        pprint(e)
     return modification.status_code
 
 
@@ -83,13 +82,13 @@ def oxe_sip_proxy(host, token):
         'SIP_Move_To_TCP': 'false',
         'ReTransNo_Invite': '4'
     }
-    requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
+    packages.urllib3.disable_warnings(packages.urllib3.exceptions.InsecureRequestWarning)
     try:
-        modification = requests.put('https://' + host + '/api/mgt/1.0/Node/1/SIP/1/SIP_Proxy/1',
-                                    json=payload,
-                                    headers=oxe_set_headers(token, 'PUT'),
-                                    verify=False)
-    except requests.exceptions.RequestException as e:
-        pprint.pprint(e)
+        modification = put('https://' + host + '/api/mgt/1.0/Node/1/SIP/1/SIP_Proxy/1',
+                           json=payload,
+                           headers=oxe_set_headers(token, 'PUT'),
+                           verify=False)
+    except exceptions.RequestException as e:
+        pprint(e)
     return modification.status_code
 

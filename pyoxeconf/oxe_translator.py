@@ -2,9 +2,8 @@
 
 """OXE translator configuration methods 
 """
-import pprint
-import requests
-import requests.packages
+from pprint import pprint
+from requests import packages, exceptions, post
 from pyoxeconf.oxe_access import oxe_set_headers
 
 
@@ -23,13 +22,13 @@ def oxe_translator_prefix_create_dpnss(host, token, dpnss_prefix):
         'Prefix_Meaning': 'Local_Facilities',
         'Local_Facility_Type': 'Pabx_address_in_network'
     }
-    requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
+    packages.urllib3.disable_warnings(packages.urllib3.exceptions.InsecureRequestWarning)
     try:
-        creation = requests.post('https://' + host + '/api/mgt/1.0/Node/1/Services_Access_Code/1/Prefix_Plan/'
-                                 + dpnss_prefix,
-                                 json=payload,
-                                 headers=oxe_set_headers(token, 'POST'),
-                                 verify=False)
-    except requests.exceptions.RequestException as e:
-        pprint.pprint(e)
+        creation = post('https://' + host + '/api/mgt/1.0/Node/1/Services_Access_Code/1/Prefix_Plan/'
+                        + dpnss_prefix,
+                        json=payload,
+                        headers=oxe_set_headers(token, 'POST'),
+                        verify=False)
+    except exceptions.RequestException as e:
+        pprint(e)
     return creation.status_code

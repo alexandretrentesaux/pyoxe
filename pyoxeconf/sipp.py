@@ -6,8 +6,8 @@ Attributes:
     register_template (TYPE): Description
 """
 
-import os
-import tempfile
+from os.path import join, exists
+from tempfile import gettempdir
 
 register_template="""<?xml version="1.0" encoding="ISO-8859-1" ?>
 <!DOCTYPE scenario SYSTEM "sipp.dtd">
@@ -75,7 +75,7 @@ def sipp_csv_generator(file, pbx, range_start, range_size, sip_password):
         range_size (str): extension range size
         sip_password (str): UAC SIP password
     """
-    with open(os.path.join(tempfile.gettempdir(), file), 'w+') as fh:
+    with open(join(gettempdir(), file), 'w+') as fh:
         fh.write('SEQUENTIAL\n')
         for i in range(range_start, range_start + range_size):
             fh.write(str(i) + ';' + pbx + ';[authentication username=' + str(i) + ' password=' + sip_password + ']\n')
@@ -89,5 +89,5 @@ def sipp_register_uac_xml_customize(file, registration_timer):
         registration_timer (int): SIP REGISTER registration timer
     
     """
-    with open(os.join(tempfile.gettempdir(), file), 'w+') as fh:
+    with open(join(gettempdir(), file), 'w+') as fh:
         fh.write(register_template.format(registration_timer, registration_timer))

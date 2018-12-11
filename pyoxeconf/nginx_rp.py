@@ -5,8 +5,8 @@
 Attributes:
     rp_template (str): Description
 """
-import os
-import tempfile
+from os.path import join
+from tempfile import gettempdir
 
 
 rp_template = """server {{
@@ -48,5 +48,5 @@ def nginx_rp_oxe_config(host, domain, cert, key, bind_ip):
         key (str): Key filename
         bind_ip (str): NGINX internal IP address
     """
-    with open(os.path.join(tempfile.gettempdir(), host + 'wbm.' + domain + '.conf'), 'w') as fh:
+    with open(join(gettempdir(), host + 'wbm.' + domain + '.conf'), 'w') as fh:
         fh.write(rp_template.format(host, host, domain, host, domain, host, domain, cert, key, bind_ip, host, domain))

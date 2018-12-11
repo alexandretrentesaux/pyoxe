@@ -2,14 +2,15 @@
 
 """Rainbow settings methods
 """
-import configparser
-import pprint
-import requests
-import requests.packages
-import paramiko
-import os
-import tempfile
+from configparser import ConfigParser
+from pprint import pprint
+from requests import packages, put, exceptions
+from paramiko import SSHClient, AutoAddPolicy, AuthenticationException
+from os.path import join, exists
+from tempfile import gettempdir
 from pyoxeconf.oxe_access import oxe_set_headers
+from sys import exit
+from time import sleep
 
 
 def oxe_get_rainbow_config(filename=None):
@@ -22,16 +23,16 @@ def oxe_get_rainbow_config(filename=None):
         TYPE: Description
     """
 
-    config = configparser.ConfigParser()
+    config = ConfigParser()
 
     if filename is None:
-        full_path = os.path.join(tempfile.gettempdir() + 'oxe.ini')
+        full_path = join(gettempdir() + 'oxe.ini')
     else:
-        full_path = os.path.join(tempfile.gettempdir(), filename)
+        full_path = join(gettempdir(), filename)
 
     print('DEBUG: trying to open ini file: {}'.format(full_path))
 
-    if os.path.exists(full_path):
+    if exists(full_path):
         config.read(full_path)
         if config.has_section('default'):
             rainbow_domain = config.get('default', 'rainbow_domain', raw=False)
@@ -64,7 +65,7 @@ def oxe_rainbow_connect(host, token, rainbow_domain, pbx_id, temp_password, phon
         INT: API request status code
     """
 
-    requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
+    packages.urllib3.disable_warnings(packages.urllib3.exceptions.InsecureRequestWarning)
     payload = {
         'Rainbow_Agent_Enable': 'Yes',
         'Rainbow_Domain': rainbow_domain,
@@ -74,13 +75,13 @@ def oxe_rainbow_connect(host, token, rainbow_domain, pbx_id, temp_password, phon
     }
 
     try:
-        response = requests.put('https://' + host + '/api/mgt/1.0/Node/1/RAINBOW/1',
-                                headers=oxe_set_headers(token, 'PUT'),
-                                json=payload,
-                                verify=False
-                                )
-    except requests.exceptions.RequestException as e:
-        pprint.pprint(e)
+        response = put('https://' + host + '/api/mgt/1.0/Node/1/RAINBOW/1',
+                       headers=oxe_set_headers(token, 'PUT'),
+                       json=payload,
+                       verify=False
+                       )
+    except exceptions.RequestException as e:
+        pprint(e)
     return response.status_code
 
 
@@ -95,15 +96,15 @@ def oxe_rainbow_disconnect(host, token):
         INT: API request status code
     """
 
-    requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
+    packages.urllib3.disable_warnings(packages.urllib3.exceptions.InsecureRequestWarning)
     # Pay attention in M1.403.15.h disabling rainbow agent also restore Rainbow domain to default value
     payload = {'Rainbow_Agent_Enable': 'No'}
     url = 'https://' + host + '/api/mgt/1.0/Node/1/RAINBOW/1'
 
     try:
-        response = requests.put(url, headers=oxe_set_headers(token, 'PUT'), json=payload, verify=False)
-    except requests.exceptions.RequestException as e:
-        pprint.pprint(e)
+        response = put(url, headers=oxe_set_headers(token, 'PUT'), json=payload, verify=False)
+    except exceptions.RequestException as e:
+        pprint(e)
     return response.status_code
 
 
@@ -119,20 +120,20 @@ def oxe_rainbow_reconnect(host, token, pbx_id, rainbow_domain):
     Returns:
         TYPE: Description
     """
-    requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
+    packages.urllib3.disable_warnings(packages.urllib3.exceptions.InsecureRequestWarning)
     payload = {
         'Rainbow_Agent_Enable': 'Yes',
         'Rainbow_Pbx_Id': pbx_id,
         'Rainbow_Domain': rainbow_domain
     }
     try:
-        response = requests.put('https://' + host + '/api/mgt/1.0/Node/1/RAINBOW/1',
-                                headers=oxe_set_headers(token, 'PUT'),
-                                json=payload,
-                                verify=False
-                                )
-    except requests.exceptions.RequestException as e:
-        pprint.pprint(e)
+        response = put('https://' + host + '/api/mgt/1.0/Node/1/RAINBOW/1',
+                       headers=oxe_set_headers(token, 'PUT'),
+                       json=payload,
+                       verify=False
+                       )
+    except exceptions.RequestException as e:
+        pprint(e)
     return response.status_code
 
 
@@ -146,11 +147,11 @@ def oxe_update_ccca_cfg_dev_all_in_one(host, port, password, api_server):
         api_server (TYPE): Description
     """
     # update ccca.cfg for all-in-one connection
-    client = paramiko.SSHClient()  # use the paramiko SSHClient
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # automatically add SSH key
+    client = SSHClient()  # use the paramiko SSHClient
+    client.set_missing_host_key_policy(AutoAddPolicy())  # automatically add SSH key
     try:
         client.connect(host, port, username='mtcl', password=password)
-    except paramiko.AuthenticationException:
+    except AuthenticationException:
         print('*** Failed to connect to {}:{}'.format(host, port))
     command = "cat >> /usr3/mao/ccca.cfg << EOF\nRAINBOW_HOST={}\nEOF\n".format(api_server)
     # print(command)
@@ -169,11 +170,11 @@ def oxe_purge_ccca_cfg(host, port, password):
     # sed -re 's/PASSWORD=.*/PASSWORD=/g' /usr3/mao/ccca.cfg
     # sed -re 's/STATE=./STATE=0/g' /usr3/mao/ccca.cfg
     # sed '/^RAINBOW_HOST/d' /usr3/mao/ccca.cfg
-    client = paramiko.SSHClient()  # use the paramiko SSHClient
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # automatically add SSH key
+    client = SSHClient()  # use the paramiko SSHClient
+    client.set_missing_host_key_policy(AutoAddPolicy())  # automatically add SSH key
     try:
         client.connect(host, port, username='mtcl', password=password)
-    except paramiko.AuthenticationException:
+    except AuthenticationException:
         print('*** Failed to connect to {}:{}'.format(host, port))
     client.exec_command("sed -i -re \'s/PASSWORD=.*/PASSWORD=/g\' /usr3/mao/ccca.cfg\n")
     client.exec_command("sed -i -re \'s/STATE=./STATE=0/g\' /usr3/mao/ccca.cfg\n")
@@ -190,27 +191,27 @@ def oxe_purge_rainbowagent_logs(host, port=22, password='mtcl', root_password='l
         password (str, optional): Description
         root_password (str, optional): Description
     """
-    client = paramiko.SSHClient()  # use the paramiko SSHClient
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # automatically add SSH key
+    client = SSHClient()  # use the paramiko SSHClient
+    client.set_missing_host_key_policy(AutoAddPolicy())  # automatically add SSH key
     try:
         client.connect(host, port, username='mtcl', password=password)
-    except paramiko.AuthenticationException:
+    except AuthenticationException:
         print('*** Failed to connect to {}:{}'.format(host, port))
     channel = client.invoke_shell()
     while channel.recv_ready() is False:
-        time.sleep(3)  # OXE is really slow on mtcl connexion
+        sleep(3)  # OXE is really slow on mtcl connexion
     stdout = channel.recv(4096)
     channel.send('su -\n')
     while channel.recv_ready() is False:
-        time.sleep(0.5)
+        sleep(0.5)
     stdout += channel.recv(1024)
     channel.send(root_password + '\n')
     while channel.recv_ready() is False:
-        time.sleep(0.5)
+        sleep(0.5)
     stdout += channel.recv(1024)
     channel.send('rm -f /var/log/rainbowagent.log.*\n')
     while channel.recv_ready() is False:
-        time.sleep(0.5)
+        sleep(0.5)
     stdout += channel.recv(1024)
     # print(stdout.decode(encoding='UTF-8'))
     channel.close()

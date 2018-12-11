@@ -2,16 +2,15 @@
 
 """OXE connection methods 
 """
-import configparser
-import pprint
-import requests
-import requests.packages
-import sys
-import os
+from configparser import ConfigParser, Error
+from requests import get, packages
+from sys import exit
+from os import chmod, remove
+from os.path import join, exists
 import json
-import paramiko
-import time
-import tempfile
+from paramiko import SSHClient, AutoAddPolicy, AuthenticationException
+from time import sleep
+from tempfile import gettempdir
 
 
 # create connection config file
@@ -25,10 +24,10 @@ def oxe_configure(host, login, password, proxies):
         proxies (json): proxies
     """
 
-    config = configparser.ConfigParser()
-    full_path = os.path.join(tempfile.gettempdir(), 'pyoxeconf.ini')
+    config = ConfigParser()
+    full_path = join(gettempdir(), 'pyoxeconf.ini')
 
-    if os.path.exists(full_path):
+    if exists(full_path):
         config.read(full_path)
 
     if config.has_section('default') is False:
@@ -48,8 +47,8 @@ def oxe_configure(host, login, password, proxies):
     with open(full_path, 'w+') as file:
         try:
             config.write(file)
-            os.chmod(full_path, 0o600)
-        except configparser.Error as e:
+            chmod(full_path, 0o600)
+        except Error as e:
             print('Error creating config file: {}'.format(full_path))
             exit(-1)
 
@@ -65,10 +64,10 @@ def oxe_get_config(host=None):
         host (None, optional): Description
     """
 
-    config = configparser.ConfigParser()
-    full_path = os.path.join(tempfile.gettempdir(), 'pyoxeconf.ini')
+    config = ConfigParser()
+    full_path = join(gettempdir(), 'pyoxeconf.ini')
 
-    if os.path.exists(full_path):
+    if exists(full_path):
         config.read(full_path)
         if config.has_section(str(host)):
             # oxe_ip = config.get(str(host), 'host', raw=False)
@@ -97,10 +96,10 @@ def oxe_get_auth_from_cache(host):
     Args:
         host (TYPE): Description
     """
-    config = configparser.ConfigParser()
-    full_path = os.path.join(tempfile.gettempdir(), '.pyoxeconf')
+    config = ConfigParser()
+    full_path = join(gettempdir(), '.pyoxeconf')
 
-    if os.path.exists(full_path):
+    if exists(full_path):
         config.read(full_path)
         if config.has_section(str(host)):
             return config.get(str(host), 'token', raw=False)
@@ -130,7 +129,7 @@ def oxe_set_headers(token, method=None):
     # addition for POST & PUT
     if method in ('POST', 'PUT'):
         headers.update({'Content-Type': 'application/json'})
-    # addtion for DELETE
+    # addition for DELETE
     elif method == 'DELETE':
         headers.update({'Content-Type': 'text/plain'})
     return headers
@@ -151,23 +150,23 @@ def oxe_authenticate(host, login, password, proxies=None):
     """
 
     # Authentication through WBM API
-    requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
+    packages.urllib3.disable_warnings(packages.urllib3.exceptions.InsecureRequestWarning)
     url = 'https://' + host + '/api/mgt/1.0/login'
-    full_path = os.path.join(tempfile.gettempdir(), '.pyoxeconf')
+    full_path = join(gettempdir(), '.pyoxeconf')
 
-    authentication = requests.get(url, timeout=10, auth=(login, password), verify=False, proxies=proxies)
+    authentication = get(url, timeout=10, auth=(login, password), verify=False, proxies=proxies)
     if authentication.status_code == 401:
         print('Error {} - {}'.format(authentication.json()['errorCode'],
                                      authentication.json()['errorMsg']))
-        sys.exit(-1)
+        exit(-1)
     elif authentication.status_code == 000:
         print('Error {} - telephony is not running on OXE / WBM not available'.format(authentication.status_code))
-        sys.exit(-1)
+        exit(-1)
 
     # Cache authentication data for later use in other CLI commands
-    config = configparser.ConfigParser()
+    config = ConfigParser()
 
-    if os.path.exists(full_path):
+    if exists(full_path):
         config.read(full_path)
 
     if config.has_section('default') is False:
@@ -189,10 +188,10 @@ def oxe_logout(host):
     Args:
         host (TYPE): Description
     """
-    config = configparser.ConfigParser()
-    full_path = os.path.join(tempfile.gettempdir(), '.pyoxeconf')
+    config = ConfigParser()
+    full_path = join(gettempdir(), '.pyoxeconf')
 
-    if os.path.exists(full_path):
+    if exists(full_path):
         config.read(full_path)
 
     if config.has_section(str(host)):
@@ -212,8 +211,8 @@ def auth_write_cache(path, config):
     with open(path, 'w+') as file:
         try:
             config.write(file)
-            os.chmod(path, 0o600)
-        except configparser.Error as e:
+            chmod(path, 0o600)
+        except Error as e:
             print('Error writing config file: {}'.format(path))
             exit(-1)
 
@@ -225,7 +224,7 @@ def oxe_logout_all():
 
     # clear cache
     try:
-        os.remove(os.path.join(tempfile.gettempdir(), '.pyoxeconf'))
+        remove(join(gettempdir(), '.pyoxeconf'))
     except IOError:
         print('JWT cache already purged')
 
@@ -247,28 +246,28 @@ def oxe_wbm_update_requests_quota(host, port, password, root_password, new_limit
           'r\/s/g\' /usr/local/openresty/nginx/conf/wbm.conf\n'
 
     # SSH connection
-    client = paramiko.SSHClient()  # use the paramiko SSHClient
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # automatically add SSH key
+    client = SSHClient()  # use the paramiko SSHClient
+    client.set_missing_host_key_policy(AutoAddPolicy())  # automatically add SSH key
     try:
         client.connect(host, port, username='mtcl', password=password)
-    except paramiko.AuthenticationException:
+    except AuthenticationException:
         print('*** Failed to connect to {}:{}'.format(host, port))
     channel = client.invoke_shell()
     while channel.recv_ready() is False:
-        time.sleep(3)  # OXE is really slow on mtcl connexion (Update this timer on physical servers)
+        sleep(3)  # OXE is really slow on mtcl connexion (Update this timer on physical servers)
     stdout = channel.recv(4096)
     channel.send('su -\n')
     while channel.recv_ready() is False:
-        time.sleep(1)
+        sleep(1)
     stdout += channel.recv(1024)
     channel.send(root_password + '\n')
     while channel.recv_ready() is False:
-        time.sleep(0.5)
+        sleep(0.5)
     stdout += channel.recv(1024)
     # channel.send('sed -i -e \'s/zone=two\:1m rate\=2r\/s/zone=two\:1m rate\=50r\/s/g\' /usr/local/openresty/nginx/conf/wbm.conf\n')
     channel.send(cmd)
     while channel.recv_ready() is False:
-        time.sleep(0.5)
+        sleep(0.5)
     stdout += channel.recv(1024)
     channel.close()
     client.close()
@@ -283,11 +282,11 @@ def oxe_wbm_restart(host, port, password):
         password (STR): mtcl password
     """
 
-    client = paramiko.SSHClient()  # use the paramiko SSHClient
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # automatically add SSH key
+    client = SSHClient()  # use the paramiko SSHClient
+    client.set_missing_host_key_policy(AutoAddPolicy())  # automatically add SSH key
     try:
         client.connect(host, port, username='mtcl', password=password)
-    except paramiko.AuthenticationException:
+    except AuthenticationException:
         print('*** Failed to connect to {}:{}'.format(host, port))
     client.exec_command('dhs3_init -R openresty')
     client.close()
